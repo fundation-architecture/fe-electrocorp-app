@@ -12,16 +12,12 @@ import { EmptyStateComponent } from '../../../../shared/presentation/components/
 import { LoadingSpinnerComponent } from '../../../../shared/presentation/components/loading-spinner/loading-spinner.component';
 import { ModalFormShellComponent } from '../../../../shared/presentation/components/modal-form-shell/modal-form-shell.component';
 import { SectionCardComponent } from '../../../../shared/presentation/components/section-card/section-card.component';
+import { AddressSuggestion } from '../../../application/models/address-suggestion.model';
 import { ActiveWorkplaceContextService } from '../../../application/services/active-workplace-context.service';
+import { WorkplaceGeocodingService } from '../../../application/services/workplace-geocoding.service';
 import { WorkplaceFacade } from '../../../application/services/workplace.facade';
 import { LocationType } from '../../../domain/model/location.entity';
 import { LocationCardComponent } from '../../components/location-card/location-card.component';
-
-interface OpenStreetMapPlace {
-  display_name: string;
-  lat: string;
-  lon: string;
-}
 
 interface MapTile {
   key: string;
@@ -64,7 +60,7 @@ export class LocationsPageComponent implements OnInit {
   createModalOpen = false;
   selectedLatitude = -12.0464;
   selectedLongitude = -77.0428;
-  addressSuggestions: OpenStreetMapPlace[] = [];
+  addressSuggestions: AddressSuggestion[] = [];
   addressSearchLoading = false;
   locatingUser = false;
   draggingMap = false;
@@ -86,6 +82,7 @@ export class LocationsPageComponent implements OnInit {
     private readonly activeWorkplaceContext: ActiveWorkplaceContextService,
     private readonly toastService: ToastService,
     private readonly confirmDialog: ConfirmDialogService,
+    private readonly geocodingService: WorkplaceGeocodingService,
     private readonly translate: TranslateService
   ) {}
 
@@ -246,17 +243,10 @@ export class LocationsPageComponent implements OnInit {
     this.scheduleAddressSearch(value);
   }
 
-  selectAddressSuggestion(place: OpenStreetMapPlace): void {
-    const latitude = Number(place.lat);
-    const longitude = Number(place.lon);
-
-    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-      return;
-    }
-
-    this.address = place.display_name;
+  selectAddressSuggestion(place: AddressSuggestion): void {
+    this.address = place.displayName;
     this.clearAddressSuggestions();
-    this.setSelectedCoordinates(latitude, longitude, true);
+    this.setSelectedCoordinates(place.latitude, place.longitude, true);
   }
 
   zoomInMap(): void {
@@ -510,20 +500,10 @@ export class LocationsPageComponent implements OnInit {
     this.addressSearchLoading = true;
 
     try {
-      const url = new URL('https://nominatim.openstreetmap.org/search');
-      url.searchParams.set('format', 'jsonv2');
-      url.searchParams.set('limit', '5');
-      url.searchParams.set('addressdetails', '1');
-      url.searchParams.set('accept-language', this.translate.currentLang || 'es');
-      url.searchParams.set('q', query);
-
-      const response = await fetch(url.toString());
-
-      if (!response.ok) {
-        throw new Error(`OpenStreetMap search failed with status ${response.status}`);
-      }
-
-      const places = (await response.json()) as OpenStreetMapPlace[];
+      const places = await this.geocodingService.searchAddressSuggestions(
+        query,
+        this.translate.currentLang || 'es'
+      );
 
       if (requestId === this.addressSearchRequestId) {
         this.addressSuggestions = places;
@@ -541,22 +521,14 @@ export class LocationsPageComponent implements OnInit {
 
   private async updateAddressFromCoordinates(latitude: number, longitude: number): Promise<void> {
     try {
-      const url = new URL('https://nominatim.openstreetmap.org/reverse');
-      url.searchParams.set('format', 'jsonv2');
-      url.searchParams.set('lat', String(latitude));
-      url.searchParams.set('lon', String(longitude));
-      url.searchParams.set('accept-language', this.translate.currentLang || 'es');
+      const resolvedAddress = await this.geocodingService.resolveAddressFromCoordinates(
+        latitude,
+        longitude,
+        this.translate.currentLang || 'es'
+      );
 
-      const response = await fetch(url.toString());
-
-      if (!response.ok) {
-        return;
-      }
-
-      const place = (await response.json()) as Partial<OpenStreetMapPlace>;
-
-      if (place.display_name) {
-        this.address = place.display_name;
+      if (resolvedAddress) {
+        this.address = resolvedAddress;
         this.clearAddressSuggestions();
       }
     } catch {
