@@ -5,5 +5,6 @@ export interface UserResponse extends BaseResponse<number> {
   email: string;
   accessProfileId: number;
   accessProfileName: string;
+  status: string;
   createdAt: string;
 }

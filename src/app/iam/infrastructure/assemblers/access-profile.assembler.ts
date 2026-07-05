@@ -14,6 +14,7 @@ export class AccessProfileAssembler extends BaseAssembler<
       id: response.id,
       name: response.name,
       description: response.description,
+      permissions: response.permissions ?? [],
     });
   }
 
@@ -21,6 +22,7 @@ export class AccessProfileAssembler extends BaseAssembler<
     return {
       name: entity.name,
       description: entity.description,
+      permissions: entity.permissions,
     };
   }
 }

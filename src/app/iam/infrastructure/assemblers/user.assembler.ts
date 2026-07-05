@@ -16,6 +16,7 @@ export class UserAssembler extends BaseAssembler<
       email: response.email,
       accessProfileId: response.accessProfileId,
       accessProfileName: response.accessProfileName,
+      status: response.status,
       createdAt: response.createdAt,
     });
   }

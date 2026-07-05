@@ -40,6 +40,7 @@ export class NotificationPreferenceAssembler extends BaseAssembler<
       systemRecommendations: response.systemRecommendations,
       dailySummaryEnabled: response.dailySummaryEnabled,
       weeklySummaryEnabled: response.weeklySummaryEnabled,
+      monthlyReportEnabled: response.monthlyReportEnabled,
       defaultDeliveryMode: response.defaultDeliveryMode,
     });
   }
@@ -74,6 +75,7 @@ export class NotificationPreferenceAssembler extends BaseAssembler<
       systemRecommendations: entity.systemRecommendations,
       dailySummaryEnabled: entity.dailySummaryEnabled,
       weeklySummaryEnabled: entity.weeklySummaryEnabled,
+      monthlyReportEnabled: entity.monthlyReportEnabled,
       defaultDeliveryMode: entity.defaultDeliveryMode,
     };
   }

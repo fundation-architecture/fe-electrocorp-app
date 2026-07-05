@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { IamFacade } from '../../../application/services/iam.facade';
 import { ToastService } from '../../../../shared/application/services/toast.service';
@@ -19,7 +19,8 @@ export class RecoverPasswordPageComponent {
 
   constructor(
     readonly iamFacade: IamFacade,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly translate: TranslateService
   ) {}
 
   async onSubmit(): Promise<void> {
@@ -28,9 +29,14 @@ export class RecoverPasswordPageComponent {
     });
 
     if (success) {
-      this.toastService.success('Solicitud de recuperación enviada.');
-    } else {
-      this.toastService.error('No se pudo enviar la recuperación.');
+      this.toastService.success(this.t('auth.recoverPasswordSent'));
+      return;
     }
+
+    this.toastService.error(this.t('auth.recoverPasswordError'));
+  }
+
+  private t(key: string): string {
+    return this.translate.instant(key);
   }
 }

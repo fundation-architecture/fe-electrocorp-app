@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../../../shared/infrastructure/api/api-config';
 import { BaseApiService } from '../../../shared/infrastructure/api/base-api.service';
@@ -22,5 +23,9 @@ export class AccessProfilesApiService extends BaseApiService<
     @Inject(API_BASE_URL) apiBaseUrl: string
   ) {
     super(http, apiBaseUrl, 'access-profiles', new AccessProfileAssembler());
+  }
+
+  findAllProfiles(): Observable<AccessProfileResponse[]> {
+    return this.http.get<AccessProfileResponse[]>(this.resourceEndpoint);
   }
 }

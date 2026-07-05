@@ -14,6 +14,11 @@ export const activeSubscriptionGuard: CanActivateFn = () => {
     return router.createUrlTree([ROUTE_PATHS.IAM.LOGIN]);
   }
 
+  if (authSession.isSessionExpired()) {
+    authSession.clearSession();
+    return router.createUrlTree([ROUTE_PATHS.IAM.LOGIN]);
+  }
+
   return billingFacade.loadActiveSubscription().then(() => {
     if (billingFacade.hasActiveSubscription()) {
       return true;
