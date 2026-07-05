@@ -1,0 +1,56 @@
+<div
+  class="wizard-overlay"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="'onboarding.wizard.title' | translate"
+>
+  <div class="wizard-card">
+    <button type="button" class="wizard-card__skip" (click)="skip()">
+      {{ 'onboarding.wizard.skip' | translate }}
+    </button>
+
+    <div class="wizard-card__progress" aria-hidden="true">
+      <span class="wizard-card__progress-bar" [style.width.%]="progress()"></span>
+    </div>
+
+    <div class="wizard-card__icon" aria-hidden="true">{{ currentStep().icon }}</div>
+
+    <p class="wizard-card__eyebrow">
+      {{ 'onboarding.wizard.stepLabel' | translate: { current: currentIndex() + 1, total: steps.length } }}
+    </p>
+
+    <h2 class="wizard-card__title">{{ currentStep().titleKey | translate }}</h2>
+    <p class="wizard-card__description">{{ currentStep().descriptionKey | translate }}</p>
+
+    <div class="wizard-card__dots" role="tablist">
+      @for (step of steps; track $index) {
+        <button
+          type="button"
+          class="wizard-card__dot"
+          [class.is-active]="$index === currentIndex()"
+          (click)="goTo($index)"
+          [attr.aria-label]="'onboarding.wizard.goToStep' | translate: { step: $index + 1 }"
+          [attr.aria-selected]="$index === currentIndex()"
+        ></button>
+      }
+    </div>
+
+    <div class="wizard-card__actions">
+      @if (!isFirstStep()) {
+        <button type="button" class="wizard-btn wizard-btn--ghost" (click)="back()">
+          {{ 'onboarding.wizard.back' | translate }}
+        </button>
+      }
+
+      @if (!isLastStep()) {
+        <button type="button" class="wizard-btn wizard-btn--primary" (click)="next()">
+          {{ 'onboarding.wizard.next' | translate }}
+        </button>
+      } @else {
+        <a class="wizard-btn wizard-btn--primary" routerLink="/spaces/sites" (click)="finish()">
+          {{ 'onboarding.wizard.finish' | translate }}
+        </a>
+      }
+    </div>
+  </div>
+</div>

@@ -7,4 +7,5 @@ export const STORAGE_KEYS = {
   darkMode: 'ec.darkMode',
   activeWorkplaceId: 'ec.activeWorkplaceId',
   notificationClassificationPolicy: 'ec.notifications.classificationPolicy',
+  onboardingCompleted: 'ec.onboarding.completed',
 } as const;

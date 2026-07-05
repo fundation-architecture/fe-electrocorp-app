@@ -78,6 +78,13 @@
 
   <app-footer />
 
+  @if (showOnboardingWizard()) {
+    <app-onboarding-wizard
+      (finished)="completeOnboarding()"
+      (skipped)="completeOnboarding()"
+    />
+  }
+
   @if (confirmDialog.dialog(); as dialog) {
     <app-confirm-dialog
       [open]="true"
