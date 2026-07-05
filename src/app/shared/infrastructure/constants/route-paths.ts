@@ -3,9 +3,11 @@ export const ROUTE_PATHS = {
     LOGIN: '/iam/login',
     REGISTER: '/iam/register',
     RECOVER_PASSWORD: '/iam/recover-password',
+    RESET_PASSWORD: '/iam/reset-password',
     PROFILE: '/settings/profile',
     ACCOUNT: '/settings/account',
     SECURITY: '/settings/security',
+    ACCESS: '/settings/access',
     PLATFORM: '/settings/platform',
   },
 

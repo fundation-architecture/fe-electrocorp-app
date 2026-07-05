@@ -14,7 +14,9 @@ import { CreateDeviceGroupCommand } from '../commands/create-device-group.comman
 import { CreateOperationModeCommand } from '../commands/create-operation-mode.command';
 import { CreateRoutineCommand } from '../commands/create-routine.command';
 import { ExecuteGroupActionCommand } from '../commands/execute-group-action.command';
+import { PairDeviceCommand } from '../commands/pair-device.command';
 import { UpdateDeviceGroupCommand } from '../commands/update-device-group.command';
+import { UpdateDeviceCommand } from '../commands/update-device.command';
 import { UpdateDeviceStatusCommand } from '../commands/update-device-status.command';
 import { UpdateRoutineStatusCommand } from '../commands/update-routine-status.command';
 
@@ -177,6 +179,49 @@ export class DeviceControlFacade {
     }
   }
 
+  async pairDevice(command: PairDeviceCommand): Promise<Device | null> {
+    this.startRequest();
+
+    try {
+      const activePlanCode = this.billingFacade.activePlanCode();
+      const canCreate = this.planPermissionService.canCreateDevice(
+        activePlanCode,
+        this.store.devices().length
+      );
+
+      if (!canCreate) {
+        this.store.setError('devices.planLimitReached');
+        return null;
+      }
+
+      const pairingCode = command.pairingCode.trim();
+
+      if (!pairingCode) {
+        this.store.setError('devices.pairError');
+        return null;
+      }
+
+      const response = await firstValueFrom(
+        this.devicesApi.pair({
+          pairingCode,
+          alias: command.alias?.trim() || null,
+          room: command.room?.trim() ?? '',
+        })
+      );
+
+      const device = this.deviceAssembler.toEntity(response);
+      this.store.prependDevice(device);
+
+      return device;
+    } catch (error) {
+      console.error(error);
+      this.store.setError('devices.pairError');
+      return null;
+    } finally {
+      this.finishRequest();
+    }
+  }
+
   async updateDeviceStatus(command: UpdateDeviceStatusCommand): Promise<boolean> {
     this.startRequest();
 
@@ -185,6 +230,42 @@ export class DeviceControlFacade {
         this.devicesApi.updateStatus({
           deviceId: command.deviceId,
           status: command.status,
+        })
+      );
+
+      const updatedDevice = this.deviceAssembler.toEntity(response);
+
+      this.store.updateDevice(updatedDevice);
+      return true;
+    } catch (error) {
+      console.error(error);
+      this.store.setError('devices.updateError');
+      return false;
+    } finally {
+      this.finishRequest();
+    }
+  }
+
+  async updateDevice(command: UpdateDeviceCommand): Promise<boolean> {
+    this.startRequest();
+
+    try {
+      const name = command.name.trim();
+
+      if (name.length < 3) {
+        this.store.setError('devices.updateError');
+        return false;
+      }
+
+      const response = await firstValueFrom(
+        this.devicesApi.updateDetails({
+          deviceId: command.deviceId,
+          resource: {
+            name,
+            room: command.room?.trim() ?? '',
+            type: command.type,
+            powerWatts: Number(command.powerWatts),
+          },
         })
       );
 

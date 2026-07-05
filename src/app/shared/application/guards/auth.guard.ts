@@ -8,6 +8,11 @@ export const authGuard: CanActivateFn = () => {
   const router = inject(Router);
 
   if (authSession.isAuthenticated()) {
+    if (authSession.isSessionExpired()) {
+      authSession.clearSession();
+      return router.createUrlTree(['/iam/login']);
+    }
+
     return true;
   }
 

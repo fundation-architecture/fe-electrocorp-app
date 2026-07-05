@@ -24,8 +24,11 @@ export class DeviceListComponent {
   @Input() locationName = '';
   @Input() roomNamesByDeviceId = new Map<number, string>();
   @Input() removingDeviceIds = new Set<number>();
+  @Input() canControlDevices = false;
+  @Input() canManageDevices = false;
 
   @Output() toggle = new EventEmitter<Device>();
+  @Output() rename = new EventEmitter<Device>();
   @Output() remove = new EventEmitter<number>();
 
   get roomGroups(): DeviceRoomGroup[] {

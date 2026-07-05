@@ -1,3 +1,5 @@
+import { AccessPermission } from '../../../../iam/domain/model/access-permission.model';
+
 export interface DropdownOption {
   label: string;
   labelKey?: string;
@@ -8,4 +10,5 @@ export interface DropdownOption {
   descriptionKey?: string;
   disabled?: boolean;
   emptyState?: boolean;
+  requiredPermission?: AccessPermission;
 }

@@ -7,12 +7,15 @@ export interface AuthenticatedUserSession {
   token: string;
   accessProfileId?: number;
   accessProfileName?: string;
+  lastActivityAt?: number;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthSessionService {
+  readonly inactivityTimeoutMs = 30 * 60 * 1000;
+
   private readonly storageKey = 'electrocorp_auth_session';
   private readonly currentUserSignal = signal<AuthenticatedUserSession | null>(null);
   private readonly loadingSignal = signal<boolean>(false);
@@ -35,13 +38,52 @@ export class AuthSessionService {
   }
 
   setCurrentUser(user: AuthenticatedUserSession): void {
-    this.currentUserSignal.set(user);
-    localStorage.setItem(this.storageKey, JSON.stringify(user));
+    const session = this.withActivityTimestamp(user);
+
+    this.currentUserSignal.set(session);
+    this.persistSession(session);
   }
 
   clearSession(): void {
     this.currentUserSignal.set(null);
     localStorage.removeItem(this.storageKey);
+  }
+
+  recordActivity(now = Date.now()): void {
+    const currentUser = this.currentUserSignal();
+
+    if (!currentUser) {
+      return;
+    }
+
+    const session = {
+      ...currentUser,
+      lastActivityAt: now,
+    };
+
+    this.currentUserSignal.set(session);
+    this.persistSession(session);
+  }
+
+  isSessionExpired(now = Date.now()): boolean {
+    const currentUser = this.currentUserSignal();
+
+    if (!currentUser) {
+      return false;
+    }
+
+    return this.isExpiredSession(currentUser, now);
+  }
+
+  millisecondsUntilTimeout(now = Date.now()): number | null {
+    const currentUser = this.currentUserSignal();
+
+    if (!currentUser) {
+      return null;
+    }
+
+    const lastActivityAt = currentUser.lastActivityAt ?? now;
+    return Math.max(0, this.inactivityTimeoutMs - (now - lastActivityAt));
   }
 
   restoreStoredSession(): AuthenticatedUserSession | null {
@@ -52,18 +94,42 @@ export class AuthSessionService {
     }
 
     try {
-      const session = JSON.parse(rawSession) as AuthenticatedUserSession;
+      const parsedSession = JSON.parse(rawSession) as AuthenticatedUserSession;
 
-      if (!session.id || !session.email || !session.fullName || !session.token) {
+      if (!parsedSession.id || !parsedSession.email || !parsedSession.fullName || !parsedSession.token) {
+        this.clearSession();
+        return null;
+      }
+
+      const session = this.withActivityTimestamp(parsedSession);
+
+      if (this.isExpiredSession(session)) {
         this.clearSession();
         return null;
       }
 
       this.currentUserSignal.set(session);
+      this.persistSession(session);
       return session;
     } catch {
       this.clearSession();
       return null;
     }
+  }
+
+  private withActivityTimestamp(session: AuthenticatedUserSession): AuthenticatedUserSession {
+    return {
+      ...session,
+      lastActivityAt: session.lastActivityAt ?? Date.now(),
+    };
+  }
+
+  private isExpiredSession(session: AuthenticatedUserSession, now = Date.now()): boolean {
+    const lastActivityAt = session.lastActivityAt ?? now;
+    return now - lastActivityAt >= this.inactivityTimeoutMs;
+  }
+
+  private persistSession(session: AuthenticatedUserSession): void {
+    localStorage.setItem(this.storageKey, JSON.stringify(session));
   }
 }

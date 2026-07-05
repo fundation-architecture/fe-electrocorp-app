@@ -47,7 +47,8 @@ export class AppLayoutComponent {
     return (
       url.startsWith('/iam/login') ||
       url.startsWith('/iam/register') ||
-      url.startsWith('/iam/recover-password')
+      url.startsWith('/iam/recover-password') ||
+      url.startsWith('/iam/reset-password')
     );
   });
 

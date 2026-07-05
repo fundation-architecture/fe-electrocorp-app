@@ -57,6 +57,7 @@
     "createAccount": "Crear cuenta",
     "backToLogin": "Volver al login",
     "logout": "Salir",
+    "sessionExpired": "Tu sesion expiro por inactividad.",
     "signInError": "No se pudo iniciar sesión. Verifica tu correo y contraseña.",
     "signUpError": "No se pudo registrar el usuario.",
     "emailAlreadyExists": "Este correo ya está registrado.",
@@ -71,6 +72,16 @@
     "sendRecoveryEmail": "Enviar correo de recuperación",
     "recoverPasswordSent": "Correo de recuperación enviado correctamente.",
     "recoverPasswordError": "No se pudo enviar el correo de recuperación.",
+    "resetPasswordEyebrow": "Seguridad de cuenta",
+    "resetPasswordTitle": "Restablecer contrasena",
+    "resetPasswordSubtitle": "Crea una nueva contrasena usando el enlace seguro recibido.",
+    "newPassword": "Nueva contrasena",
+    "confirmPassword": "Confirmar contrasena",
+    "resetPasswordAction": "Guardar nueva contrasena",
+    "resetPasswordSuccess": "Contrasena actualizada correctamente.",
+    "resetPasswordError": "No se pudo restablecer la contrasena.",
+    "resetPasswordTokenRequired": "El enlace de recuperacion no es valido o esta incompleto.",
+    "passwordsDoNotMatch": "Las contrasenas no coinciden.",
     "profileUpdated": "Perfil actualizado correctamente.",
     "profileUpdateError": "No se pudo actualizar el perfil.",
     "deleteAccountError": "No se pudo eliminar la cuenta.",
@@ -100,6 +111,35 @@
     "alertDescription": "Revisa alertas de consumo, automatización y eventos importantes del sistema.",
     "setupHint": "Selecciona o crea una sede para enfocar Inicio.",
     "setupEmpty": "Inicio se activa cuando existe una sede.",
+    "setupGuide": {
+      "ariaLabel": "Guia de instalacion inicial",
+      "eyebrow": "Primer uso",
+      "title": "Guia de instalacion",
+      "description": "Completa estos pasos para que la cuenta quede lista con sede, ambiente, equipo, asignacion y rutina.",
+      "progressLabel": "completado",
+      "steps": {
+        "site": {
+          "title": "Crear sede",
+          "description": "Define la casa, local o sucursal donde se medira la operacion."
+        },
+        "room": {
+          "title": "Crear habitacion",
+          "description": "Organiza los equipos por ambientes reales antes de asignarlos."
+        },
+        "device": {
+          "title": "Conectar equipo",
+          "description": "Registra o empareja un dispositivo para comenzar el control."
+        },
+        "assignment": {
+          "title": "Asignar a ambiente",
+          "description": "Vincula el equipo con una sede y una habitacion activa."
+        },
+        "routine": {
+          "title": "Activar rutina",
+          "description": "Programa una accion automatica para validar la instalacion."
+        }
+      }
+    },
     "operationalCenterTitle": "Centro operativo",
     "operationalCenterDescription": "Vista resumida de la sede activa, sus espacios, operación, consumo, alertas y servicio.",
     "loadingEyebrow": "Cargando",
@@ -423,12 +463,16 @@
     "type": "Tipo",
     "power": "Potencia en watts",
     "create": "Crear dispositivo",
+    "connect": "Conectar equipo",
+    "rename": "Editar",
+    "renameTitle": "Editar nombre del dispositivo",
     "turnOn": "Encender",
     "turnOff": "Apagar",
     "emptyTitle": "Todavía no hay dispositivos",
     "emptyContent": "Agrega tu primer enchufe, interruptor o luz inteligente para comenzar.",
     "loadError": "No se pudieron cargar los dispositivos.",
     "createError": "No se pudo crear el dispositivo.",
+    "pairError": "No se pudo conectar el equipo.",
     "updateError": "No se pudo actualizar el dispositivo.",
     "deleteError": "No se pudo eliminar el dispositivo.",
     "planLimitReached": "Has alcanzado el límite de dispositivos permitido por tu plan.",
@@ -464,6 +508,25 @@
       "namePlaceholder": "Ej. Luz principal",
       "wattsLabel": "Watts del dispositivo"
     },
+    "pair": {
+      "eyebrow": "Emparejamiento",
+      "description": "Ingresa el codigo del equipo y ElectroCorp lo registrara en la habitacion seleccionada.",
+      "code": "Codigo del equipo",
+      "codePlaceholder": "EC-PLUG-100",
+      "alias": "Nombre visible",
+      "aliasPlaceholder": "Ej. Enchufe cafetera",
+      "availableTitle": "Equipos disponibles",
+      "options": {
+        "plug": "Enchufe inteligente",
+        "light": "Luz inteligente",
+        "sensor": "Sensor de movimiento",
+        "switch": "Interruptor inteligente"
+      }
+    },
+    "renameForm": {
+      "eyebrow": "Dispositivo existente",
+      "description": "Actualiza el nombre visible del dispositivo sin cambiar su habitacion, tipo ni potencia."
+    },
     "powerAdvice": {
       "highTitle": "Consumo alto",
       "normalTitle": "Monitoreo controlado",
@@ -486,6 +549,7 @@
     "validation": {
       "nameRequired": "Escribe el nombre del dispositivo.",
       "nameMinLength": "El nombre del dispositivo debe tener al menos 3 caracteres.",
+      "pairingCodeRequired": "Ingresa el codigo del equipo.",
       "roomRequired": "Selecciona una habitacion de la sede activa.",
       "powerRequired": "La potencia del dispositivo debe ser mayor a 0 W.",
       "roomRequiredBeforePreset": "Crea una habitacion en la sede activa antes de agregar dispositivos."
@@ -493,11 +557,14 @@
     "toasts": {
       "createdAndAssigned": "Dispositivo creado y asignado a {{room}}.",
       "createdWithoutAssignment": "Dispositivo creado, pero no se pudo asignar a la habitacion activa.",
+      "pairedAndAssigned": "{{device}} conectado y asignado a {{room}}.",
+      "pairedWithoutAssignment": "Equipo conectado, pero no se pudo asignar a la habitacion activa.",
       "presetCreatedAndAssigned": "{{device}} agregado y asignado a {{room}}.",
       "presetCreatedWithoutAssignment": "{{device}} fue creado, pero no se pudo asignar a la habitacion activa.",
       "presetCreateError": "No se pudo agregar {{device}}.",
       "turnedOn": "Dispositivo encendido.",
       "turnedOff": "Dispositivo apagado.",
+      "renamed": "Nombre del dispositivo actualizado.",
       "deletedHistoryKept": "Dispositivo eliminado; el historial se conserva.",
       "removedRoutineSingular": "Su rutina asociada tambien desaparecio.",
       "removedRoutinePlural": "{{count}} rutinas asociadas tambien desaparecieron."
@@ -934,6 +1001,7 @@
   },
   "common": {
     "loading": "Cargando...",
+    "saveChanges": "Guardar cambios",
     "delete": "Eliminar",
     "cancel": "Cancelar",
     "continue": "Continuar",
@@ -1261,7 +1329,9 @@
       "dailySummaryTitle": "Resumen diario",
       "dailySummaryDescription": "Agrupa actividad del dia.",
       "weeklySummaryTitle": "Resumen semanal",
-      "weeklySummaryDescription": "Agrupa tendencias semanales."
+      "weeklySummaryDescription": "Agrupa tendencias semanales.",
+      "monthlyReportTitle": "Reporte mensual",
+      "monthlyReportDescription": "Genera y avisa el reporte mensual por correo preparado."
     }
   },
   "workplace": {
@@ -1569,6 +1639,20 @@
     },
     "generatedReportsTitle": "Reportes generados",
     "generatedReportsDescription": "Revisa los reportes creados y abre cada detalle desde su resumen.",
+    "activityTitle": "Historial de actividad",
+    "activityDescription": "Consulta las acciones recientes registradas por la plataforma para mantener trazabilidad operativa.",
+    "activityEmptyEyebrow": "Sin actividad",
+    "activityEmptyTitle": "Todavia no hay eventos registrados",
+    "activityEmptyContent": "Las acciones importantes apareceran aqui cuando uses cuenta, control, energia, soporte o facturacion.",
+    "activitySources": {
+      "account": "Cuenta",
+      "billing": "Facturacion",
+      "control": "Control",
+      "workplace": "Espacios",
+      "energy": "Energia",
+      "support": "Soporte",
+      "general": "Operacion"
+    },
     "emptyReportsEyebrow": "Sin reportes",
     "from": "Desde",
     "to": "Hasta",
@@ -2150,6 +2234,8 @@
       "securityDescription": "Acceso y recuperacion",
       "billing": "Facturacion",
       "billingDescription": "Plan, pagos y facturas",
+      "access": "Accesos",
+      "accessDescription": "Perfiles y permisos",
       "platform": "Plataforma",
       "platformDescription": "Preferencias locales"
     },
@@ -2229,11 +2315,73 @@
       "requiredTextHint": "El boton de eliminacion permanecera bloqueado hasta que la confirmacion coincida exactamente.",
       "deleteAccountError": "No se pudo eliminar la cuenta."
     },
+    "access": {
+      "title": "Perfiles de acceso",
+      "pageDescription": "Revisa que acciones puede ejecutar cada perfil dentro de ElectroCorp.",
+      "currentProfileEyebrow": "Perfil actual",
+      "currentProfileTitle": "Alcance de tu cuenta",
+      "currentProfileDescription": "El perfil asignado controla las rutas, acciones y secciones disponibles para esta sesion.",
+      "profile": "Perfil",
+      "currentProfileBadge": "Asignado",
+      "assignmentEyebrow": "Usuarios",
+      "assignmentTitle": "Asignacion de perfiles",
+      "assignmentDescription": "Cambia el alcance de cada usuario para compartir acceso con administradores, miembros o invitados.",
+      "status": "Estado",
+      "profileSelector": "Seleccionar perfil",
+      "matrixEyebrow": "Permisos",
+      "matrixTitle": "Matriz de perfiles",
+      "matrixDescription": "Catalogo real de perfiles obtenido desde IAM para evidenciar control de acceso.",
+      "permissionCount": "{{count}} permisos habilitados",
+      "emptyEyebrow": "Sin datos",
+      "emptyTitle": "No hay perfiles disponibles",
+      "emptyDescription": "El catalogo de perfiles aparecera cuando el servicio de IAM responda.",
+      "usersEmptyEyebrow": "Sin usuarios",
+      "usersEmptyTitle": "No hay usuarios disponibles",
+      "usersEmptyDescription": "Los usuarios activos apareceran aqui cuando tu cuenta tenga permiso para gestionar accesos.",
+      "loadError": "No se pudieron cargar los perfiles de acceso.",
+      "loadUsersError": "No se pudieron cargar los usuarios.",
+      "assignError": "No se pudo cambiar el perfil del usuario.",
+      "statuses": {
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "profiles": {
+        "owner": {
+          "title": "Propietario",
+          "description": "Administra la cuenta completa, facturacion, usuarios y configuracion operativa."
+        },
+        "admin": {
+          "title": "Administrador",
+          "description": "Opera sedes, dispositivos, rutinas, alertas, soporte y reportes sin gestionar facturacion."
+        },
+        "member": {
+          "title": "Miembro",
+          "description": "Usa la plataforma diaria con control operativo y lectura de energia y reportes."
+        },
+        "guest": {
+          "title": "Invitado",
+          "description": "Accede solo a la vista principal y controles basicos autorizados."
+        }
+      },
+      "permissions": {
+        "VIEW_HOME": "Ver inicio",
+        "CONTROL_DEVICES": "Controlar dispositivos",
+        "MANAGE_DEVICES": "Gestionar dispositivos",
+        "MANAGE_ROUTINES": "Gestionar rutinas y modos",
+        "MANAGE_SPACES": "Gestionar sedes y ambientes",
+        "VIEW_ENERGY": "Ver energia",
+        "VIEW_REPORTS": "Ver reportes",
+        "MANAGE_ALERTS": "Gestionar alertas",
+        "MANAGE_SUPPORT": "Gestionar soporte",
+        "MANAGE_BILLING": "Gestionar facturacion",
+        "MANAGE_ACCESS": "Gestionar accesos"
+      }
+    },
     "platform": {
       "title": "Preferencias locales",
       "pageDescription": "Ajusta la apariencia e idioma de ElectroCorp en este navegador.",
       "browserExperienceTitle": "Experiencia del navegador",
-      "browserExperienceDescription": "Se aplican en este navegador y se conservan localmente.",
+      "browserExperienceDescription": "Se aplican en este navegador y se sincronizan con tu cuenta.",
       "darkMode": "Modo oscuro",
       "lightMode": "Modo claro",
       "darkModeDescription": "Cambia la apariencia de la interfaz en este navegador.",
@@ -2248,16 +2396,16 @@
       },
       "languageApplied": "Idioma aplicado en este navegador.",
       "appearanceApplied": "Apariencia aplicada en este navegador.",
-      "localStatusEyebrow": "Estado local",
+      "localStatusEyebrow": "Estado de cuenta",
       "preferencesSummaryTitle": "Resumen de preferencias",
       "preferencesSummaryDescription": "Confirma como esta configurada la experiencia en este navegador.",
       "appearance": "Apariencia",
       "appearanceDescription": "La preferencia visual se aplica al shell y componentes compartidos de la interfaz.",
       "activeLanguage": "Idioma activo",
-      "activeLanguageDescription": "El idioma seleccionado se conserva localmente para mantener la navegacion consistente.",
+      "activeLanguageDescription": "El idioma seleccionado se conserva en tu cuenta para mantener la navegacion consistente.",
       "scope": "Alcance",
-      "local": "Local",
-      "scopeDescription": "Estos ajustes viven en el navegador actual y quedan listos para sincronizarse con preferencias de usuario."
+      "local": "Cuenta",
+      "scopeDescription": "Estos ajustes se guardan en tu cuenta y se reflejan en este navegador."
     },
     "billing": {
       "title": "Plan y pagos",

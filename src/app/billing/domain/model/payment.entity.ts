@@ -9,6 +9,8 @@ export class Payment extends BaseEntity<number> {
   private readonly _currency: string;
   private readonly _status: PaymentStatus;
   private readonly _paymentMethod: string;
+  private readonly _gatewayTransactionId: string | null;
+  private readonly _gatewayStatusMessage: string | null;
 
   constructor(props: {
     id: number;
@@ -17,6 +19,8 @@ export class Payment extends BaseEntity<number> {
     currency: string;
     status: PaymentStatus;
     paymentMethod: string;
+    gatewayTransactionId?: string | null;
+    gatewayStatusMessage?: string | null;
   }) {
     super(props.id);
     this._userId = props.userId;
@@ -24,6 +28,8 @@ export class Payment extends BaseEntity<number> {
     this._currency = props.currency;
     this._status = props.status;
     this._paymentMethod = props.paymentMethod;
+    this._gatewayTransactionId = props.gatewayTransactionId ?? null;
+    this._gatewayStatusMessage = props.gatewayStatusMessage ?? null;
   }
 
   get userId(): number {
@@ -44,6 +50,14 @@ export class Payment extends BaseEntity<number> {
 
   get paymentMethod(): string {
     return this._paymentMethod;
+  }
+
+  get gatewayTransactionId(): string | null {
+    return this._gatewayTransactionId;
+  }
+
+  get gatewayStatusMessage(): string | null {
+    return this._gatewayStatusMessage;
   }
 
   get isApproved(): boolean {

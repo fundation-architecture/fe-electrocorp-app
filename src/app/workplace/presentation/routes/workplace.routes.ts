@@ -1,12 +1,13 @@
 import { Routes } from '@angular/router';
 
 import { activeSubscriptionGuard } from '../../../shared/application/guards/active-subscription.guard';
+import { accessPermissionGuard } from '../../../shared/application/guards/access-permission.guard';
 
 export const WORKPLACE_ROUTES: Routes = [
   {
     path: 'spaces/sites',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Sedes' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Sedes', requiredPermissions: ['MANAGE_SPACES'] },
     loadComponent: () =>
       import('../pages/locations/locations-page.component').then(
         (m) => m.LocationsPageComponent
@@ -14,8 +15,8 @@ export const WORKPLACE_ROUTES: Routes = [
   },
   {
     path: 'spaces/rooms',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Habitaciones' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Habitaciones', requiredPermissions: ['MANAGE_SPACES'] },
     loadComponent: () =>
       import('../pages/rooms/rooms-page.component').then(
         (m) => m.RoomsPageComponent
@@ -23,8 +24,8 @@ export const WORKPLACE_ROUTES: Routes = [
   },
   {
     path: 'spaces/assignments',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Asignaciones' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Asignaciones', requiredPermissions: ['MANAGE_SPACES'] },
     loadComponent: () =>
       import(
         '../pages/device-assignments/device-assignments-page.component'

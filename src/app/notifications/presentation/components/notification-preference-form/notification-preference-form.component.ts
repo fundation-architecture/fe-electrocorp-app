@@ -98,6 +98,7 @@ export class NotificationPreferenceFormComponent implements OnChanges {
   systemRecommendations = true;
   dailySummaryEnabled = true;
   weeklySummaryEnabled = false;
+  monthlyReportEnabled = true;
   defaultDeliveryMode: NotificationDeliveryMode = 'BANNER';
 
   readonly levels: AlertLevel[] = ['SUCCESS', 'STABLE', 'INFO', 'WARNING', 'CRITICAL'];
@@ -355,6 +356,7 @@ export class NotificationPreferenceFormComponent implements OnChanges {
     this.systemRecommendations = this.preference.systemRecommendations;
     this.dailySummaryEnabled = this.preference.dailySummaryEnabled;
     this.weeklySummaryEnabled = this.preference.weeklySummaryEnabled;
+    this.monthlyReportEnabled = this.preference.monthlyReportEnabled;
     this.defaultDeliveryMode = this.preference.defaultDeliveryMode;
   }
 
@@ -384,6 +386,7 @@ export class NotificationPreferenceFormComponent implements OnChanges {
       systemRecommendations: this.systemRecommendations,
       dailySummaryEnabled: this.dailySummaryEnabled,
       weeklySummaryEnabled: this.weeklySummaryEnabled,
+      monthlyReportEnabled: this.monthlyReportEnabled,
       defaultDeliveryMode: this.defaultDeliveryMode,
     });
   }

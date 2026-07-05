@@ -5,6 +5,7 @@ export class User extends BaseEntity<number> {
   private readonly _email: string;
   private readonly _accessProfileId: number;
   private readonly _accessProfileName: string;
+  private readonly _status: string;
   private readonly _createdAt: string;
 
   constructor(props: {
@@ -13,6 +14,7 @@ export class User extends BaseEntity<number> {
     email: string;
     accessProfileId: number;
     accessProfileName: string;
+    status?: string;
     createdAt: string;
   }) {
     super(props.id);
@@ -20,6 +22,7 @@ export class User extends BaseEntity<number> {
     this._email = props.email;
     this._accessProfileId = props.accessProfileId;
     this._accessProfileName = props.accessProfileName;
+    this._status = props.status ?? 'ACTIVE';
     this._createdAt = props.createdAt;
   }
 
@@ -37,6 +40,10 @@ export class User extends BaseEntity<number> {
 
   get accessProfileName(): string {
     return this._accessProfileName;
+  }
+
+  get status(): string {
+    return this._status;
   }
 
   get createdAt(): string {
