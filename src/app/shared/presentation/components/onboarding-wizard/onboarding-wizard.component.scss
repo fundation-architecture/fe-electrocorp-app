@@ -1,0 +1,166 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: block;
+}
+
+.wizard-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(4, 8, 18, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.wizard-card {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  padding: 2.25rem 2rem 1.75rem;
+  border-radius: 20px;
+  background: var(--surface-color, #ffffff);
+  color: var(--text-color, #0a0f18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  animation: wizard-in 0.25s ease-out;
+}
+
+.wizard-card__skip {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted-color, #6b7280);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+}
+
+.wizard-card__skip:hover {
+  color: var(--text-color, #0a0f18);
+}
+
+.wizard-card__progress {
+  height: 4px;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--border-color, rgba(0, 0, 0, 0.08));
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.wizard-card__progress-bar {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary-color, #3b82f6);
+  transition: width 0.3s ease;
+}
+
+.wizard-card__icon {
+  font-size: 2.75rem;
+  line-height: 1;
+  margin-bottom: 0.75rem;
+}
+
+.wizard-card__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted-color, #6b7280);
+}
+
+.wizard-card__title {
+  margin: 0 0 0.75rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.wizard-card__description {
+  margin: 0 auto 1.5rem;
+  max-width: 34ch;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-muted-color, #4b5563);
+}
+
+.wizard-card__dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.wizard-card__dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--border-color, rgba(0, 0, 0, 0.18));
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.wizard-card__dot.is-active {
+  background: var(--primary-color, #3b82f6);
+  transform: scale(1.35);
+}
+
+.wizard-card__actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.wizard-btn {
+  min-width: 120px;
+  padding: 0.65rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wizard-btn--primary {
+  background: var(--primary-color, #3b82f6);
+  color: #ffffff;
+}
+
+.wizard-btn--primary:hover {
+  filter: brightness(0.95);
+}
+
+.wizard-btn--ghost {
+  background: transparent;
+  color: var(--text-color, #0a0f18);
+  border-color: var(--border-color, rgba(0, 0, 0, 0.15));
+}
+
+.wizard-btn--ghost:hover {
+  background: var(--border-color, rgba(0, 0, 0, 0.06));
+}
+
+@keyframes wizard-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

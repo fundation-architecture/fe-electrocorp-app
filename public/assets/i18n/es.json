@@ -40,7 +40,34 @@
     "locationRequiredEyebrow": "Sede requerida",
     "locationRequiredTitle": "Crea una sede para empezar a usar esta funcion.",
     "locationRequiredDescription": "Aun no tienes una sede configurada. Crea tu primera sede para organizar habitaciones, dispositivos, rutinas, metas, alertas y reportes.",
-    "createLocationAction": "Crear sede"
+    "createLocationAction": "Crear sede",
+    "wizard": {
+      "title": "Primeros pasos",
+      "skip": "Omitir",
+      "back": "Atras",
+      "next": "Siguiente",
+      "finish": "Crear mi primera sede",
+      "stepLabel": "Paso {{current}} de {{total}}",
+      "goToStep": "Ir al paso {{step}}",
+      "steps": {
+        "welcome": {
+          "title": "Bienvenido a ElectroCorp",
+          "description": "Configuremos tu cuenta en unos pocos pasos para que empieces a controlar tu consumo de energia."
+        },
+        "site": {
+          "title": "Crea tu primera sede",
+          "description": "Una sede representa tu hogar o negocio. Dentro de ella organizaras habitaciones y dispositivos."
+        },
+        "devices": {
+          "title": "Agrega tus dispositivos inteligentes",
+          "description": "Registra tus enchufes e interruptores inteligentes para controlarlos de forma remota y agruparlos por habitacion."
+        },
+        "monitor": {
+          "title": "Monitorea tu consumo",
+          "description": "Visualiza tu consumo de energia en tiempo real, define metas y recibe alertas cuando el consumo sea inusual."
+        }
+      }
+    }
   },
   "auth": {
     "loginEyebrow": "Bienvenido de nuevo",
