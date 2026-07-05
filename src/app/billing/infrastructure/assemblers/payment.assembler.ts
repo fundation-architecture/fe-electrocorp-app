@@ -17,6 +17,8 @@ export class PaymentAssembler extends BaseAssembler<
       currency: response.currency,
       status: response.status,
       paymentMethod: response.paymentMethod,
+      gatewayTransactionId: response.gatewayTransactionId,
+      gatewayStatusMessage: response.gatewayStatusMessage,
     });
   }
 

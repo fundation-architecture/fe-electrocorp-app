@@ -29,5 +29,6 @@ export interface NotificationPreferenceResource extends BaseResource {
   systemRecommendations?: boolean;
   dailySummaryEnabled?: boolean;
   weeklySummaryEnabled?: boolean;
+  monthlyReportEnabled?: boolean;
   defaultDeliveryMode?: NotificationDeliveryMode;
 }

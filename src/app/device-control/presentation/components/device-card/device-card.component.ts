@@ -26,8 +26,11 @@ export class DeviceCardComponent implements OnChanges, OnDestroy {
   @Input() locationName = '';
   @Input() roomName = '';
   @Input() removing = false;
+  @Input() canControlDevices = false;
+  @Input() canManageDevices = false;
 
   @Output() toggle = new EventEmitter<Device>();
+  @Output() rename = new EventEmitter<Device>();
   @Output() remove = new EventEmitter<number>();
 
   powerTransition: PowerTransition = null;
@@ -106,7 +109,7 @@ export class DeviceCardComponent implements OnChanges, OnDestroy {
   }
 
   onToggle(): void {
-    if (this.removing || !this.device.canReceiveOperationalChanges) {
+    if (this.removing || !this.canControlDevices || !this.device.canReceiveOperationalChanges) {
       return;
     }
 
@@ -114,11 +117,19 @@ export class DeviceCardComponent implements OnChanges, OnDestroy {
   }
 
   onRemove(): void {
-    if (this.removing) {
+    if (this.removing || !this.canManageDevices) {
       return;
     }
 
     this.remove.emit(this.device.id);
+  }
+
+  onRename(): void {
+    if (this.removing || !this.canManageDevices) {
+      return;
+    }
+
+    this.rename.emit(this.device);
   }
 
   private playPowerTransition(state: Exclude<PowerTransition, null>): void {

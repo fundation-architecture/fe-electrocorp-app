@@ -7,6 +7,7 @@ import { BaseApiService } from '../../../shared/infrastructure/api/base-api.serv
 
 import { User } from '../../domain/model/user.entity';
 import { UserAssembler } from '../assemblers/user.assembler';
+import { AssignAccessProfileResource } from '../resources/assign-access-profile.resource';
 import { UserResource } from '../resources/user.resource';
 import { UserResponse } from '../responses/user.response';
 
@@ -29,6 +30,10 @@ export class UsersApiService extends BaseApiService<
     return this.http.get<UserResponse>(`${this.resourceEndpoint}/me`);
   }
 
+  findManagedUsers(): Observable<UserResponse[]> {
+    return this.findAll();
+  }
+
   updateCurrentProfile(resource: UserResource): Observable<UserResponse> {
     return this.http.put<UserResponse>(`${this.resourceEndpoint}/me`, resource);
   }
@@ -46,5 +51,15 @@ export class UsersApiService extends BaseApiService<
 
   deleteAccount(userId: number): Observable<void> {
     return this.delete(userId);
+  }
+
+  assignAccessProfile(
+    userId: number,
+    resource: AssignAccessProfileResource
+  ): Observable<UserResponse> {
+    return this.http.patch<UserResponse>(
+      `${this.resourceEndpoint}/${userId}/access-profile`,
+      resource
+    );
   }
 }

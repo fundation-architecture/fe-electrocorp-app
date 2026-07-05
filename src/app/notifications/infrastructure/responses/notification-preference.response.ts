@@ -29,5 +29,6 @@ export interface NotificationPreferenceResponse extends BaseResponse<number> {
   systemRecommendations?: boolean;
   dailySummaryEnabled?: boolean;
   weeklySummaryEnabled?: boolean;
+  monthlyReportEnabled?: boolean;
   defaultDeliveryMode?: NotificationDeliveryMode;
 }

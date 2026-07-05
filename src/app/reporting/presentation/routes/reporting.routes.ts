@@ -1,12 +1,13 @@
 import { Routes } from '@angular/router';
 
 import { activeSubscriptionGuard } from '../../../shared/application/guards/active-subscription.guard';
+import { accessPermissionGuard } from '../../../shared/application/guards/access-permission.guard';
 
 export const REPORTING_ROUTES: Routes = [
   {
     path: 'energy/reports',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Reportes' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Reportes', requiredPermissions: ['VIEW_REPORTS'] },
     loadComponent: () =>
       import('../pages/reports/reports-page.component').then(
         (m) => m.ReportsPageComponent
@@ -14,8 +15,8 @@ export const REPORTING_ROUTES: Routes = [
   },
   {
     path: 'energy/goals',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Metas' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Metas', requiredPermissions: ['VIEW_REPORTS'] },
     loadComponent: () =>
       import('../pages/energy-goals/energy-goals-page.component').then(
         (m) => m.EnergyGoalsPageComponent

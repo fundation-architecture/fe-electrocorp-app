@@ -1,12 +1,13 @@
 import { Routes } from '@angular/router';
 
 import { activeSubscriptionGuard } from '../../../shared/application/guards/active-subscription.guard';
+import { accessPermissionGuard } from '../../../shared/application/guards/access-permission.guard';
 
 export const DEVICE_CONTROL_ROUTES: Routes = [
   {
     path: 'operation/devices',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Dispositivos' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Dispositivos', requiredPermissions: ['CONTROL_DEVICES'] },
     loadComponent: () =>
       import('../pages/devices/devices-page.component').then(
         (m) => m.DevicesPageComponent
@@ -14,8 +15,8 @@ export const DEVICE_CONTROL_ROUTES: Routes = [
   },
   {
     path: 'operation/groups',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Grupos' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Grupos', requiredPermissions: ['MANAGE_ROUTINES'] },
     loadComponent: () =>
       import('../pages/device-groups/device-groups-page.component').then(
         (m) => m.DeviceGroupsPageComponent
@@ -23,8 +24,8 @@ export const DEVICE_CONTROL_ROUTES: Routes = [
   },
   {
     path: 'operation/routines',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Rutinas' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Rutinas', requiredPermissions: ['MANAGE_ROUTINES'] },
     loadComponent: () =>
       import('../pages/routines/routines-page.component').then(
         (m) => m.RoutinesPageComponent
@@ -32,8 +33,8 @@ export const DEVICE_CONTROL_ROUTES: Routes = [
   },
   {
     path: 'operation/modes',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Modos' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Modos', requiredPermissions: ['MANAGE_ROUTINES'] },
     loadComponent: () =>
       import('../pages/operation-modes/operation-modes-page.component').then(
         (m) => m.OperationModesPageComponent

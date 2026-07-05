@@ -90,6 +90,47 @@
       (reportSelected)="openReportDetail($event)"
     />
 
+    <section class="activity-card">
+      <div class="activity-card__header">
+        <div>
+          <h2>{{ 'reporting.activityTitle' | translate }}</h2>
+          <p>{{ 'reporting.activityDescription' | translate }}</p>
+        </div>
+
+        <span>
+          {{ reportingFacade.reportingEvents().length }}
+          {{ 'history.records' | translate }}
+        </span>
+      </div>
+
+      <div class="activity-list">
+        @for (activity of reportingFacade.reportingEvents(); track activity.id) {
+          <article class="activity-item">
+            <span class="activity-source">
+              {{ activitySourceLabelKey(activity.sourceContext) | translate }}
+            </span>
+
+            <div class="activity-copy">
+              <h3>{{ activity.summary }}</h3>
+              @if (activity.detail) {
+                <p>{{ activity.detail }}</p>
+              }
+            </div>
+
+            <time [attr.datetime]="activity.occurredOn">
+              {{ formatDateTime(activity.occurredOn) }}
+            </time>
+          </article>
+        } @empty {
+          <app-empty-state
+            [eyebrow]="'reporting.activityEmptyEyebrow' | translate"
+            [title]="'reporting.activityEmptyTitle' | translate"
+            [description]="'reporting.activityEmptyContent' | translate"
+          />
+        }
+      </div>
+    </section>
+
     <section class="report-list-card">
       <div class="report-list-card__header">
         <div>

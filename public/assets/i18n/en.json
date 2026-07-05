@@ -57,6 +57,7 @@
     "createAccount": "Create account",
     "backToLogin": "Back to login",
     "logout": "Logout",
+    "sessionExpired": "Your session expired due to inactivity.",
     "signInError": "Could not sign in. Check your email and password.",
     "signUpError": "Could not register the user.",
     "emailAlreadyExists": "This email is already registered.",
@@ -71,6 +72,16 @@
     "sendRecoveryEmail": "Send recovery email",
     "recoverPasswordSent": "Recovery email sent successfully.",
     "recoverPasswordError": "Could not send the recovery email.",
+    "resetPasswordEyebrow": "Account security",
+    "resetPasswordTitle": "Reset password",
+    "resetPasswordSubtitle": "Create a new password using the secure link you received.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "resetPasswordAction": "Save new password",
+    "resetPasswordSuccess": "Password updated successfully.",
+    "resetPasswordError": "Could not reset the password.",
+    "resetPasswordTokenRequired": "The recovery link is not valid or is incomplete.",
+    "passwordsDoNotMatch": "Passwords do not match.",
     "profileUpdated": "Profile updated successfully.",
     "profileUpdateError": "Could not update the profile.",
     "deleteAccountError": "Could not delete the account.",
@@ -100,6 +111,35 @@
     "alertDescription": "Review consumption alerts, automation notices and important system events.",
     "setupHint": "Select or create a site to focus Home.",
     "setupEmpty": "Home activates when a site exists.",
+    "setupGuide": {
+      "ariaLabel": "Initial installation guide",
+      "eyebrow": "First use",
+      "title": "Installation guide",
+      "description": "Complete these steps so the account is ready with site, room, equipment, assignment and routine.",
+      "progressLabel": "complete",
+      "steps": {
+        "site": {
+          "title": "Create site",
+          "description": "Define the home, business or branch where operation will be measured."
+        },
+        "room": {
+          "title": "Create room",
+          "description": "Organize equipment by real rooms before assigning it."
+        },
+        "device": {
+          "title": "Connect equipment",
+          "description": "Register or pair a device to start control."
+        },
+        "assignment": {
+          "title": "Assign to room",
+          "description": "Link the equipment with an active site and room."
+        },
+        "routine": {
+          "title": "Activate routine",
+          "description": "Schedule an automatic action to validate the installation."
+        }
+      }
+    },
     "operationalCenterTitle": "Operations center",
     "operationalCenterDescription": "Summary view of the active site, its spaces, operation, consumption, alerts, and service.",
     "loadingEyebrow": "Loading",
@@ -423,12 +463,16 @@
     "type": "Type",
     "power": "Power in watts",
     "create": "Create device",
+    "connect": "Connect equipment",
+    "rename": "Edit",
+    "renameTitle": "Edit device name",
     "turnOn": "Turn on",
     "turnOff": "Turn off",
     "emptyTitle": "No devices yet",
     "emptyContent": "Add your first smart plug, switch or light to get started.",
     "loadError": "Could not load devices.",
     "createError": "Could not create device.",
+    "pairError": "Could not connect equipment.",
     "updateError": "Could not update device.",
     "deleteError": "Could not delete device.",
     "planLimitReached": "You have reached the device limit allowed by your plan.",
@@ -464,6 +508,25 @@
       "namePlaceholder": "E.g. Main light",
       "wattsLabel": "Device watts"
     },
+    "pair": {
+      "eyebrow": "Pairing",
+      "description": "Enter the equipment code and ElectroCorp will register it in the selected room.",
+      "code": "Equipment code",
+      "codePlaceholder": "EC-PLUG-100",
+      "alias": "Visible name",
+      "aliasPlaceholder": "E.g. Coffee maker plug",
+      "availableTitle": "Available equipment",
+      "options": {
+        "plug": "Smart plug",
+        "light": "Smart light",
+        "sensor": "Motion sensor",
+        "switch": "Smart switch"
+      }
+    },
+    "renameForm": {
+      "eyebrow": "Existing device",
+      "description": "Update the visible device name without changing its room, type or power."
+    },
     "powerAdvice": {
       "highTitle": "High consumption",
       "normalTitle": "Controlled monitoring",
@@ -486,6 +549,7 @@
     "validation": {
       "nameRequired": "Enter the device name.",
       "nameMinLength": "The device name must have at least 3 characters.",
+      "pairingCodeRequired": "Enter the equipment code.",
       "roomRequired": "Select a room in the active site.",
       "powerRequired": "Device power must be greater than 0 W.",
       "roomRequiredBeforePreset": "Create a room in the active site before adding devices."
@@ -493,11 +557,14 @@
     "toasts": {
       "createdAndAssigned": "Device created and assigned to {{room}}.",
       "createdWithoutAssignment": "Device created, but it could not be assigned to the active room.",
+      "pairedAndAssigned": "{{device}} connected and assigned to {{room}}.",
+      "pairedWithoutAssignment": "Equipment connected, but it could not be assigned to the active room.",
       "presetCreatedAndAssigned": "{{device}} added and assigned to {{room}}.",
       "presetCreatedWithoutAssignment": "{{device}} was created, but it could not be assigned to the active room.",
       "presetCreateError": "Could not add {{device}}.",
       "turnedOn": "Device turned on.",
       "turnedOff": "Device turned off.",
+      "renamed": "Device name updated.",
       "deletedHistoryKept": "Device deleted; history is kept.",
       "removedRoutineSingular": "Its associated routine was also removed.",
       "removedRoutinePlural": "{{count}} associated routines were also removed."
@@ -934,6 +1001,7 @@
   },
   "common": {
     "loading": "Loading...",
+    "saveChanges": "Save changes",
     "delete": "Delete",
     "cancel": "Cancel",
     "continue": "Continue",
@@ -1261,7 +1329,9 @@
       "dailySummaryTitle": "Daily summary",
       "dailySummaryDescription": "Groups daily activity.",
       "weeklySummaryTitle": "Weekly summary",
-      "weeklySummaryDescription": "Groups weekly trends."
+      "weeklySummaryDescription": "Groups weekly trends.",
+      "monthlyReportTitle": "Monthly report",
+      "monthlyReportDescription": "Generates and notifies the monthly report through the prepared email channel."
     }
   },
   "workplace": {
@@ -1569,6 +1639,20 @@
     },
     "generatedReportsTitle": "Generated reports",
     "generatedReportsDescription": "Review created reports and open each detail from its summary.",
+    "activityTitle": "Activity history",
+    "activityDescription": "Review recent actions recorded by the platform to keep operational traceability.",
+    "activityEmptyEyebrow": "No activity",
+    "activityEmptyTitle": "No events recorded yet",
+    "activityEmptyContent": "Important actions will appear here when you use account, control, energy, support, or billing.",
+    "activitySources": {
+      "account": "Account",
+      "billing": "Billing",
+      "control": "Control",
+      "workplace": "Spaces",
+      "energy": "Energy",
+      "support": "Support",
+      "general": "Operation"
+    },
     "emptyReportsEyebrow": "No reports",
     "from": "From",
     "to": "To",
@@ -2150,6 +2234,8 @@
       "securityDescription": "Access and recovery",
       "billing": "Billing",
       "billingDescription": "Plan, payments and invoices",
+      "access": "Access",
+      "accessDescription": "Profiles and permissions",
       "platform": "Platform",
       "platformDescription": "Local preferences"
     },
@@ -2229,11 +2315,73 @@
       "requiredTextHint": "The delete button will remain blocked until the confirmation matches exactly.",
       "deleteAccountError": "Could not delete the account."
     },
+    "access": {
+      "title": "Access profiles",
+      "pageDescription": "Review which actions each profile can execute inside ElectroCorp.",
+      "currentProfileEyebrow": "Current profile",
+      "currentProfileTitle": "Account scope",
+      "currentProfileDescription": "The assigned profile controls the routes, actions and sections available for this session.",
+      "profile": "Profile",
+      "currentProfileBadge": "Assigned",
+      "assignmentEyebrow": "Users",
+      "assignmentTitle": "Profile assignment",
+      "assignmentDescription": "Change each user's scope to share access with administrators, members or guests.",
+      "status": "Status",
+      "profileSelector": "Select profile",
+      "matrixEyebrow": "Permissions",
+      "matrixTitle": "Profile matrix",
+      "matrixDescription": "Real IAM profile catalog used to evidence access control.",
+      "permissionCount": "{{count}} permissions enabled",
+      "emptyEyebrow": "No data",
+      "emptyTitle": "No profiles available",
+      "emptyDescription": "The profile catalog will appear when the IAM service responds.",
+      "usersEmptyEyebrow": "No users",
+      "usersEmptyTitle": "No users available",
+      "usersEmptyDescription": "Active users will appear here when your account can manage access.",
+      "loadError": "Could not load access profiles.",
+      "loadUsersError": "Could not load users.",
+      "assignError": "Could not change the user's profile.",
+      "statuses": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "profiles": {
+        "owner": {
+          "title": "Owner",
+          "description": "Manages the full account, billing, users and operational settings."
+        },
+        "admin": {
+          "title": "Administrator",
+          "description": "Operates sites, devices, routines, alerts, support and reports without managing billing."
+        },
+        "member": {
+          "title": "Member",
+          "description": "Uses the daily platform with operational control and energy and report reading."
+        },
+        "guest": {
+          "title": "Guest",
+          "description": "Accesses only the home view and authorized basic controls."
+        }
+      },
+      "permissions": {
+        "VIEW_HOME": "View home",
+        "CONTROL_DEVICES": "Control devices",
+        "MANAGE_DEVICES": "Manage devices",
+        "MANAGE_ROUTINES": "Manage routines and modes",
+        "MANAGE_SPACES": "Manage sites and rooms",
+        "VIEW_ENERGY": "View energy",
+        "VIEW_REPORTS": "View reports",
+        "MANAGE_ALERTS": "Manage alerts",
+        "MANAGE_SUPPORT": "Manage support",
+        "MANAGE_BILLING": "Manage billing",
+        "MANAGE_ACCESS": "Manage access"
+      }
+    },
     "platform": {
       "title": "Local preferences",
       "pageDescription": "Adjust ElectroCorp appearance and language in this browser.",
       "browserExperienceTitle": "Browser experience",
-      "browserExperienceDescription": "Applied in this browser and kept locally.",
+      "browserExperienceDescription": "Applied in this browser and synced with your account.",
       "darkMode": "Dark mode",
       "lightMode": "Light mode",
       "darkModeDescription": "Change the interface appearance in this browser.",
@@ -2248,16 +2396,16 @@
       },
       "languageApplied": "Language applied in this browser.",
       "appearanceApplied": "Appearance applied in this browser.",
-      "localStatusEyebrow": "Local status",
+      "localStatusEyebrow": "Account status",
       "preferencesSummaryTitle": "Preferences summary",
       "preferencesSummaryDescription": "Confirm how the experience is configured in this browser.",
       "appearance": "Appearance",
       "appearanceDescription": "The visual preference applies to the shell and shared interface components.",
       "activeLanguage": "Active language",
-      "activeLanguageDescription": "The selected language is kept locally to maintain consistent navigation.",
+      "activeLanguageDescription": "The selected language is saved to your account to maintain consistent navigation.",
       "scope": "Scope",
-      "local": "Local",
-      "scopeDescription": "These settings live in the current browser and are ready to sync with user preferences."
+      "local": "Account",
+      "scopeDescription": "These settings are stored in your account and reflected in this browser."
     },
     "billing": {
       "title": "Plan and payments",

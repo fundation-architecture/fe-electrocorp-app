@@ -14,6 +14,49 @@
       <p>{{ 'home.loadingDescription' | translate }}</p>
     </app-section-card>
   } @else {
+    @if (!setupGuideComplete()) {
+      <section class="setup-guide" [attr.aria-label]="'home.setupGuide.ariaLabel' | translate">
+        <header class="setup-guide__header">
+          <div>
+            <p class="home-eyebrow">{{ 'home.setupGuide.eyebrow' | translate }}</p>
+            <h2>{{ 'home.setupGuide.title' | translate }}</h2>
+            <p>{{ 'home.setupGuide.description' | translate }}</p>
+          </div>
+          <div class="setup-guide__progress">
+            <strong>{{ setupProgress().completed }}/{{ setupProgress().total }}</strong>
+            <span>{{ 'home.setupGuide.progressLabel' | translate }}</span>
+            <div class="setup-guide__bar" aria-hidden="true">
+              <span [style.width.%]="setupProgress().percent"></span>
+            </div>
+          </div>
+        </header>
+
+        <div class="setup-guide__steps">
+          @for (step of setupSteps(); track step.id) {
+            <article class="setup-step" [class.setup-step--complete]="step.completed">
+              <div class="setup-step__marker" aria-hidden="true">
+                @if (step.completed) {
+                  <span>OK</span>
+                } @else {
+                  <span>{{ $index + 1 }}</span>
+                }
+              </div>
+              <div>
+                <strong>{{ step.titleKey | translate }}</strong>
+                <p>{{ step.descriptionKey | translate }}</p>
+              </div>
+              <app-button
+                variant="ghost"
+                size="sm"
+                [link]="step.actionLink"
+                [label]="step.actionLabelKey | translate"
+              />
+            </article>
+          }
+        </div>
+      </section>
+    }
+
     <section class="home-top-grid" [attr.aria-label]="'home.mainSummaryAria' | translate">
       <app-section-card class="home-card home-card--site" size="large">
         <div class="home-card__header">

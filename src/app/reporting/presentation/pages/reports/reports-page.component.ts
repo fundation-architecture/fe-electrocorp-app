@@ -466,6 +466,19 @@ export class ReportsPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  activitySourceLabelKey(sourceContext: string): string {
+    const labels: Record<string, string> = {
+      IAM: 'reporting.activitySources.account',
+      BILLING: 'reporting.activitySources.billing',
+      DEVICE_CONTROL: 'reporting.activitySources.control',
+      WORKPLACE: 'reporting.activitySources.workplace',
+      ENERGY_MONITORING: 'reporting.activitySources.energy',
+      SERVICE_MANAGEMENT: 'reporting.activitySources.support',
+    };
+
+    return labels[sourceContext?.toUpperCase()] ?? 'reporting.activitySources.general';
+  }
+
   formatNumber(value: number, decimals = 2): string {
     return Number(value || 0).toLocaleString(this.currentLocale(), {
       minimumFractionDigits: decimals,

@@ -31,6 +31,7 @@ export class NotificationPreference extends BaseEntity<number> {
   private readonly _systemRecommendations: boolean;
   private readonly _dailySummaryEnabled: boolean;
   private readonly _weeklySummaryEnabled: boolean;
+  private readonly _monthlyReportEnabled: boolean;
   private readonly _defaultDeliveryMode: NotificationDeliveryMode;
 
   constructor(props: {
@@ -61,6 +62,7 @@ export class NotificationPreference extends BaseEntity<number> {
     systemRecommendations?: boolean;
     dailySummaryEnabled?: boolean;
     weeklySummaryEnabled?: boolean;
+    monthlyReportEnabled?: boolean;
     defaultDeliveryMode?: NotificationDeliveryMode;
   }) {
     super(props.id);
@@ -96,6 +98,7 @@ export class NotificationPreference extends BaseEntity<number> {
     this._systemRecommendations = props.systemRecommendations ?? true;
     this._dailySummaryEnabled = props.dailySummaryEnabled ?? true;
     this._weeklySummaryEnabled = props.weeklySummaryEnabled ?? false;
+    this._monthlyReportEnabled = props.monthlyReportEnabled ?? true;
     this._defaultDeliveryMode = props.defaultDeliveryMode ?? 'BANNER';
   }
 
@@ -201,6 +204,10 @@ export class NotificationPreference extends BaseEntity<number> {
 
   get weeklySummaryEnabled(): boolean {
     return this._weeklySummaryEnabled;
+  }
+
+  get monthlyReportEnabled(): boolean {
+    return this._monthlyReportEnabled;
   }
 
   get defaultDeliveryMode(): NotificationDeliveryMode {

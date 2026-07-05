@@ -6,6 +6,7 @@ import { API_BASE_URL } from '../../../shared/infrastructure/api/api-config';
 
 import { SignInResource } from '../resources/sign-in.resource';
 import { SignUpResource } from '../resources/sign-up.resource';
+import { ResetPasswordResource } from '../resources/reset-password.resource';
 import { AuthResponse } from '../responses/auth.response';
 import { UserResponse } from '../responses/user.response';
 
@@ -40,5 +41,9 @@ export class AuthApiService {
 
   recoverPassword(email: string): Observable<void> {
     return this.http.post<void>(`${this.authUrl}/recover-password`, { email });
+  }
+
+  resetPassword(resource: ResetPasswordResource): Observable<void> {
+    return this.http.post<void>(`${this.authUrl}/reset-password`, resource);
   }
 }
