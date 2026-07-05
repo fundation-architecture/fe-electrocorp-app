@@ -6,6 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AuthSessionService } from '../../../application/services/auth-session.service';
 import { UiPreferencesService } from '../../../application/services/ui-preferences.service';
+import { OnboardingService } from '../../../application/services/onboarding.service';
 import { IamFacade } from '../../../../iam/application/services/iam.facade';
 import { FooterComponent } from '../footer/footer.component';
 import { HeaderComponent } from '../header/header.component';
@@ -13,6 +14,7 @@ import { ToastContainerComponent } from '../toast-container/toast-container.comp
 import { WorkplaceFacade } from '../../../../workplace/application/services/workplace.facade';
 import { ConfirmDialogService } from '../../../application/services/confirm-dialog.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { OnboardingWizardComponent } from '../onboarding-wizard/onboarding-wizard.component';
 
 @Component({
   selector: 'app-layout',
@@ -26,6 +28,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
     HeaderComponent,
     ToastContainerComponent,
     ConfirmDialogComponent,
+    OnboardingWizardComponent,
   ],
   templateUrl: './app-layout.component.html',
   styleUrls: ['./app-layout.component.scss'],
@@ -38,6 +41,7 @@ export class AppLayoutComponent {
   readonly iamFacade = inject(IamFacade);
   readonly workplaceFacade = inject(WorkplaceFacade);
   readonly confirmDialog = inject(ConfirmDialogService);
+  readonly onboarding = inject(OnboardingService);
 
   readonly currentUrl = signal(this.router.url);
   readonly isDrawerOpen = signal(false);
@@ -54,6 +58,13 @@ export class AppLayoutComponent {
   readonly currentUser = computed(() => this.authSession.currentUser?.() ?? null);
   readonly isAuthenticated = computed(() => this.authSession.isAuthenticated());
   readonly isUserSidebarOpen = signal(false);
+  readonly showOnboardingWizard = computed(() => {
+    return (
+      this.isAuthenticated() &&
+      !this.isAuthScreen() &&
+      !this.onboarding.completed()
+    );
+  });
   readonly requiresLocationSetup = computed(() => {
     if (!this.isAuthenticated() || this.isAuthScreen()) {
       return false;
@@ -142,6 +153,10 @@ export class AppLayoutComponent {
 
   closeUserSidebar(): void {
     this.isUserSidebarOpen.set(false);
+  }
+
+  completeOnboarding(): void {
+    this.onboarding.complete();
   }
 
   private ensureWorkplaceLoaded(): void {
