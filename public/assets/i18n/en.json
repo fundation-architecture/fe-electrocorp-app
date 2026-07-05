@@ -40,7 +40,34 @@
     "locationRequiredEyebrow": "Location required",
     "locationRequiredTitle": "Create a location to start using this feature.",
     "locationRequiredDescription": "You do not have a location configured yet. Create your first location to organize rooms, devices, routines, goals, alerts and reports.",
-    "createLocationAction": "Create location"
+    "createLocationAction": "Create location",
+    "wizard": {
+      "title": "Getting started",
+      "skip": "Skip",
+      "back": "Back",
+      "next": "Next",
+      "finish": "Create my first site",
+      "stepLabel": "Step {{current}} of {{total}}",
+      "goToStep": "Go to step {{step}}",
+      "steps": {
+        "welcome": {
+          "title": "Welcome to ElectroCorp",
+          "description": "Let's set up your account in a few steps so you can start controlling your energy consumption."
+        },
+        "site": {
+          "title": "Create your first site",
+          "description": "A site represents your home or business. You will organize rooms and devices inside it."
+        },
+        "devices": {
+          "title": "Add your smart devices",
+          "description": "Register your smart plugs and switches to control them remotely and group them by room."
+        },
+        "monitor": {
+          "title": "Monitor your consumption",
+          "description": "Track your energy usage in real time, set goals and get alerts when consumption is unusual."
+        }
+      }
+    }
   },
   "auth": {
     "loginEyebrow": "Welcome back",

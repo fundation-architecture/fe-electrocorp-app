@@ -40,7 +40,34 @@
     "locationRequiredEyebrow": "Localizacao requerida",
     "locationRequiredTitle": "Crie uma localizacao para comecar a usar este recurso.",
     "locationRequiredDescription": "Voce ainda nao tem uma localizacao configurada. Crie sua primeira localizacao para organizar ambientes, dispositivos, rotinas, metas, alertas e relatorios.",
-    "createLocationAction": "Criar localizacao"
+    "createLocationAction": "Criar localizacao",
+    "wizard": {
+      "title": "Primeiros passos",
+      "skip": "Pular",
+      "back": "Voltar",
+      "next": "Proximo",
+      "finish": "Criar minha primeira localizacao",
+      "stepLabel": "Passo {{current}} de {{total}}",
+      "goToStep": "Ir para o passo {{step}}",
+      "steps": {
+        "welcome": {
+          "title": "Bem-vindo a ElectroCorp",
+          "description": "Vamos configurar sua conta em alguns passos para que voce comece a controlar seu consumo de energia."
+        },
+        "site": {
+          "title": "Crie sua primeira localizacao",
+          "description": "Uma localizacao representa sua casa ou negocio. Dentro dela voce organizara ambientes e dispositivos."
+        },
+        "devices": {
+          "title": "Adicione seus dispositivos inteligentes",
+          "description": "Registre suas tomadas e interruptores inteligentes para controla-los remotamente e agrupa-los por ambiente."
+        },
+        "monitor": {
+          "title": "Monitore seu consumo",
+          "description": "Acompanhe seu consumo de energia em tempo real, defina metas e receba alertas quando o consumo for incomum."
+        }
+      }
+    }
   },
   "auth": {
     "loginEyebrow": "Bem-vindo de volta",
