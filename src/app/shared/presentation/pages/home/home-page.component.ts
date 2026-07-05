@@ -22,6 +22,15 @@ import { DeviceAssignment } from '../../../../workplace/domain/model/device-assi
 import { Location, LocationType } from '../../../../workplace/domain/model/location.entity';
 import { UiPreferencesService } from '../../../application/services/ui-preferences.service';
 
+interface SetupStep {
+  id: string;
+  completed: boolean;
+  titleKey: string;
+  descriptionKey: string;
+  actionLabelKey: string;
+  actionLink: string;
+}
+
 @Component({
   selector: 'app-home-page',
   standalone: true,
@@ -290,6 +299,74 @@ export class HomePageComponent implements OnInit {
       this.reportingFacade.loading() ||
       this.notificationsFacade.loading() ||
       this.serviceManagementFacade.loading()
+  );
+
+  readonly setupSteps = computed<SetupStep[]>(() => {
+    const availableDevices = this.deviceControlFacade
+      .devices()
+      .filter((device) => !device.isRemoved);
+    const availableDeviceIds = new Set(availableDevices.map((device) => device.id));
+    const assignmentsForAvailableDevices = this.workplaceFacade
+      .deviceAssignments()
+      .filter((assignment) => availableDeviceIds.has(assignment.deviceId));
+
+    return [
+      {
+        id: 'site',
+        completed: this.workplaceFacade.locations().length > 0,
+        titleKey: 'home.setupGuide.steps.site.title',
+        descriptionKey: 'home.setupGuide.steps.site.description',
+        actionLabelKey: 'onboarding.createLocationAction',
+        actionLink: '/spaces/sites',
+      },
+      {
+        id: 'room',
+        completed: this.workplaceFacade.rooms().length > 0,
+        titleKey: 'home.setupGuide.steps.room.title',
+        descriptionKey: 'home.setupGuide.steps.room.description',
+        actionLabelKey: 'workplace.createRoom',
+        actionLink: '/spaces/rooms',
+      },
+      {
+        id: 'device',
+        completed: availableDevices.length > 0,
+        titleKey: 'home.setupGuide.steps.device.title',
+        descriptionKey: 'home.setupGuide.steps.device.description',
+        actionLabelKey: 'devices.connect',
+        actionLink: '/operation/devices',
+      },
+      {
+        id: 'assignment',
+        completed: assignmentsForAvailableDevices.length > 0,
+        titleKey: 'home.setupGuide.steps.assignment.title',
+        descriptionKey: 'home.setupGuide.steps.assignment.description',
+        actionLabelKey: 'nav.assignments',
+        actionLink: '/spaces/assignments',
+      },
+      {
+        id: 'routine',
+        completed: this.deviceControlFacade.routines().some((routine) => routine.enabled),
+        titleKey: 'home.setupGuide.steps.routine.title',
+        descriptionKey: 'home.setupGuide.steps.routine.description',
+        actionLabelKey: 'routines.addTitle',
+        actionLink: '/operation/routines',
+      },
+    ];
+  });
+
+  readonly setupProgress = computed(() => {
+    const steps = this.setupSteps();
+    const completed = steps.filter((step) => step.completed).length;
+
+    return {
+      completed,
+      total: steps.length,
+      percent: steps.length === 0 ? 0 : Math.round((completed / steps.length) * 100),
+    };
+  });
+
+  readonly setupGuideComplete = computed(() =>
+    this.setupProgress().completed === this.setupProgress().total
   );
 
   async ngOnInit(): Promise<void> {

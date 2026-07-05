@@ -11,6 +11,7 @@
 
 .summary-grid article,
 .form-card,
+.activity-card,
 .report-list-card,
 .empty-state {
   padding: 20px;
@@ -99,6 +100,13 @@ input {
     var(--surface-color);
 }
 
+.activity-card {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.activity-card__header,
 .report-list-card__header {
   display: flex;
   align-items: flex-start;
@@ -106,6 +114,7 @@ input {
   gap: 18px;
 }
 
+.activity-card__header h2,
 .report-list-card__header h2 {
   margin: 0 0 6px;
   color: var(--text-primary);
@@ -114,6 +123,7 @@ input {
   line-height: 1.1;
 }
 
+.activity-card__header p,
 .report-list-card__header p {
   max-width: min(100%, 640px);
   margin: 0;
@@ -122,6 +132,7 @@ input {
   line-height: var(--ec-copy-line-height);
 }
 
+.activity-card__header > span,
 .report-list-card__header > span {
   flex: 0 0 auto;
   color: var(--ec-copy-color);
@@ -130,9 +141,67 @@ input {
   white-space: nowrap;
 }
 
+.activity-list,
 .list {
   display: grid;
   gap: 14px;
+}
+
+.activity-item {
+  display: grid;
+  grid-template-columns: 132px 1fr auto;
+  align-items: start;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--field-bg);
+}
+
+.activity-source {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 7px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--accent-color);
+  background: var(--ec-accent-soft);
+  font-size: 0.78rem;
+  font-weight: 950;
+  text-align: center;
+}
+
+.activity-copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.activity-copy h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.activity-copy p {
+  margin: 0;
+  color: var(--ec-copy-color);
+  font-size: 0.92rem;
+  font-weight: var(--ec-copy-weight);
+  line-height: var(--ec-copy-line-height);
+}
+
+.activity-item time {
+  color: var(--ec-copy-color);
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.35;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .loading-wrapper {
@@ -163,12 +232,28 @@ input {
   }
 
   .form-card__header,
+  .activity-card__header,
   .report-list-card__header {
     align-items: flex-start;
     flex-direction: column;
   }
 
   .range-summary {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 720px) {
+  .activity-item {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-source {
+    justify-self: start;
+  }
+
+  .activity-item time {
+    text-align: left;
     white-space: normal;
   }
 }

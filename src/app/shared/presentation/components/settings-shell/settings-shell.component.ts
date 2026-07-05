@@ -1,13 +1,16 @@
 import { TranslateModule } from '@ngx-translate/core';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
+import { AccessPermission } from '../../../../iam/domain/model/access-permission.model';
 import { ROUTE_PATHS } from '../../../infrastructure/constants/route-paths';
+import { AccessControlService } from '../../../application/services/access-control.service';
 
 type SettingsSectionId =
   | 'profile'
   | 'account'
   | 'security'
+  | 'access'
   | 'billing'
   | 'platform';
 
@@ -16,6 +19,7 @@ interface SettingsNavItem {
   labelKey: string;
   descriptionKey: string;
   link: string;
+  requiredPermission?: AccessPermission;
 }
 
 @Component({
@@ -31,6 +35,8 @@ interface SettingsNavItem {
   styleUrls: ['./settings-shell.component.scss'],
 })
 export class SettingsShellComponent {
+  private readonly accessControl = inject(AccessControlService);
+
   readonly navItems: SettingsNavItem[] = [
     {
       id: 'profile',
@@ -55,6 +61,14 @@ export class SettingsShellComponent {
       labelKey: 'settings.nav.billing',
       descriptionKey: 'settings.nav.billingDescription',
       link: ROUTE_PATHS.BILLING.SETTINGS,
+      requiredPermission: 'MANAGE_BILLING',
+    },
+    {
+      id: 'access',
+      labelKey: 'settings.nav.access',
+      descriptionKey: 'settings.nav.accessDescription',
+      link: ROUTE_PATHS.IAM.ACCESS,
+      requiredPermission: 'MANAGE_ACCESS',
     },
     {
       id: 'platform',
@@ -64,4 +78,9 @@ export class SettingsShellComponent {
     },
   ];
 
+  visibleNavItems(): SettingsNavItem[] {
+    return this.navItems.filter((item) =>
+      !item.requiredPermission || this.accessControl.has(item.requiredPermission)
+    );
+  }
 }

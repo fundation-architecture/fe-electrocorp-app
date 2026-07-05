@@ -1,9 +1,11 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, effect, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 
 import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from '../../infrastructure/constants/app-language';
 import { STORAGE_KEYS } from '../../infrastructure/constants/storage-keys';
+import { UiPreferencesApiService } from '../../infrastructure/api/ui-preferences-api.service';
 
 type LanguageCode = 'es' | 'en' | 'pt';
 export type AppTheme = 'light' | 'dark';
@@ -17,6 +19,7 @@ const LEGACY_THEME_KEY = 'electrocorp_theme';
 export class UiPreferencesService {
   private readonly document = inject(DOCUMENT);
   private readonly translate = inject(TranslateService);
+  private readonly uiPreferencesApi = inject(UiPreferencesApiService);
   private readonly storage = this.document.defaultView?.localStorage;
 
   readonly currentLanguage = signal<LanguageCode>(this.readStoredLanguage());
@@ -33,12 +36,16 @@ export class UiPreferencesService {
       this.writeStorage(STORAGE_KEYS.language, language);
       this.writeStorage(LEGACY_LANGUAGE_KEY, language);
       this.translate.use(language);
+      this.persistRemotePreferences();
     });
 
     effect(() => {
       const darkMode = this.isDarkMode();
       this.applyTheme(darkMode ? 'dark' : 'light');
+      this.persistRemotePreferences();
     });
+
+    void this.loadRemotePreferences();
   }
 
   setLanguage(language: LanguageCode): void {
@@ -74,6 +81,25 @@ export class UiPreferencesService {
 
     this.writeStorage(LEGACY_THEME_KEY, theme);
     this.writeStorage(STORAGE_KEYS.darkMode, String(theme === 'dark'));
+  }
+
+  private async loadRemotePreferences(): Promise<void> {
+    try {
+      const preference = await firstValueFrom(this.uiPreferencesApi.getCurrent());
+      if (this.isSupportedLanguage(preference.language)) {
+        this.currentLanguage.set(preference.language);
+      }
+      this.setTheme(preference.theme);
+    } catch {
+      return;
+    }
+  }
+
+  private persistRemotePreferences(): void {
+    void firstValueFrom(this.uiPreferencesApi.save({
+      language: this.currentLanguage(),
+      theme: this.isDarkMode() ? 'dark' : 'light',
+    })).catch(() => undefined);
   }
 
   private readStoredLanguage(): LanguageCode {

@@ -36,7 +36,7 @@
       variant="action"
       size="sm"
       (pressed)="onToggle()"
-      [disabled]="removing || !device.canReceiveOperationalChanges"
+      [disabled]="removing || !canControlDevices || !device.canReceiveOperationalChanges"
     >
       @if (device.isOn) {
         {{ 'devices.turnOff' | translate }}
@@ -45,8 +45,16 @@
       }
     </app-button>
 
-    <app-button variant="danger" size="sm" [disabled]="removing" (pressed)="onRemove()">
-      {{ 'common.delete' | translate }}
-    </app-button>
+    @if (canManageDevices) {
+      <app-button variant="neutral" size="sm" [disabled]="removing" (pressed)="onRename()">
+        {{ 'devices.rename' | translate }}
+      </app-button>
+    }
+
+    @if (canManageDevices) {
+      <app-button variant="danger" size="sm" [disabled]="removing" (pressed)="onRemove()">
+        {{ 'common.delete' | translate }}
+      </app-button>
+    }
   </div>
 </article>

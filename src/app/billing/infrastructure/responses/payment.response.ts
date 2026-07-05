@@ -7,4 +7,6 @@ export interface PaymentResponse extends BaseResponse<number> {
   currency: string;
   status: PaymentStatus;
   paymentMethod: string;
+  gatewayTransactionId?: string | null;
+  gatewayStatusMessage?: string | null;
 }

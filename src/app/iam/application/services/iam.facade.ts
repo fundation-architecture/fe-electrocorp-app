@@ -9,15 +9,19 @@ import {
 import { ROUTE_PATHS } from '../../../shared/infrastructure/constants/route-paths';
 
 import { User } from '../../domain/model/user.entity';
+import { AccessProfile } from '../../domain/model/access-profile.entity';
 
 import { DeleteAccountCommand } from '../commands/delete-account.command';
 import { RecoverPasswordCommand } from '../commands/recover-password.command';
+import { ResetPasswordCommand } from '../commands/reset-password.command';
 import { SignInCommand } from '../commands/sign-in.command';
 import { SignUpCommand } from '../commands/sign-up.command';
 import { UpdateProfileCommand } from '../commands/update-profile.command';
 
 import { AuthApiService } from '../../infrastructure/api/auth-api.service';
+import { AccessProfilesApiService } from '../../infrastructure/api/access-profiles-api.service';
 import { UsersApiService } from '../../infrastructure/api/users-api.service';
+import { AccessProfileAssembler } from '../../infrastructure/assemblers/access-profile.assembler';
 import { UserAssembler } from '../../infrastructure/assemblers/user.assembler';
 
 import { IamStore } from '../stores/iam.store';
@@ -31,9 +35,18 @@ interface SignUpOptions {
 })
 export class IamFacade {
   private readonly userAssembler = new UserAssembler();
+  private readonly accessProfileAssembler = new AccessProfileAssembler();
 
   get currentUser() {
     return this.store.currentUser;
+  }
+
+  get users() {
+    return this.store.users;
+  }
+
+  get accessProfiles() {
+    return this.store.accessProfiles;
   }
 
   get loading() {
@@ -50,6 +63,7 @@ export class IamFacade {
 
   constructor(
     private readonly authApi: AuthApiService,
+    private readonly accessProfilesApi: AccessProfilesApiService,
     private readonly usersApi: UsersApiService,
     private readonly authSession: AuthSessionService,
     private readonly router: Router,
@@ -201,6 +215,109 @@ export class IamFacade {
     } catch (error) {
       console.error(error);
       this.store.setError('auth.recoverPasswordError');
+      return false;
+    } finally {
+      this.finishRequest();
+    }
+  }
+
+  async loadAccessProfiles(): Promise<AccessProfile[]> {
+    this.startRequest();
+
+    try {
+      const responses = await firstValueFrom(this.accessProfilesApi.findAllProfiles());
+      const profiles = responses.map((response) =>
+        this.accessProfileAssembler.toEntity(response)
+      );
+
+      this.store.setAccessProfiles(profiles);
+      return profiles;
+    } catch (error) {
+      console.error(error);
+      this.store.setError('settings.access.loadError');
+      return [];
+    } finally {
+      this.finishRequest();
+    }
+  }
+
+  async loadManagedUsers(): Promise<User[]> {
+    this.startRequest();
+
+    try {
+      const responses = await firstValueFrom(this.usersApi.findManagedUsers());
+      const users = responses.map((response) => this.userAssembler.toEntity(response));
+
+      this.store.setUsers(users);
+      return users;
+    } catch (error) {
+      console.error(error);
+      this.store.setError('settings.access.loadUsersError');
+      return [];
+    } finally {
+      this.finishRequest();
+    }
+  }
+
+  async assignAccessProfile(userId: number, accessProfileId: number): Promise<boolean> {
+    this.startRequest();
+
+    try {
+      const response = await firstValueFrom(
+        this.usersApi.assignAccessProfile(userId, { accessProfileId })
+      );
+      const updatedUser = this.userAssembler.toEntity(response);
+
+      this.store.updateUser(updatedUser);
+
+      const currentUser = this.store.currentUser();
+      const token = this.authSession.token();
+      if (currentUser?.id === updatedUser.id && token) {
+        this.setAuthenticatedUser(updatedUser, token);
+      }
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      this.store.setError('settings.access.assignError');
+      return false;
+    } finally {
+      this.finishRequest();
+    }
+  }
+
+  async resetPassword(command: ResetPasswordCommand): Promise<boolean> {
+    this.startRequest();
+
+    try {
+      if (!command.token.trim()) {
+        this.store.setError('auth.resetPasswordTokenRequired');
+        return false;
+      }
+
+      if (command.password.length < 8) {
+        this.store.setError('auth.passwordTooShort');
+        return false;
+      }
+
+      if (command.password !== command.confirmPassword) {
+        this.store.setError('auth.passwordsDoNotMatch');
+        return false;
+      }
+
+      await firstValueFrom(
+        this.authApi.resetPassword({
+          token: command.token.trim(),
+          password: command.password,
+        })
+      );
+
+      await this.router.navigateByUrl(ROUTE_PATHS.IAM.LOGIN);
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      this.store.setError('auth.resetPasswordError');
       return false;
     } finally {
       this.finishRequest();

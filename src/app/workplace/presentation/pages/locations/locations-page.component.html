@@ -126,13 +126,13 @@
                 </span>
               }
 
-              @for (suggestion of addressSuggestions; track suggestion.display_name) {
+              @for (suggestion of addressSuggestions; track suggestion.displayName) {
                 <button
                   type="button"
                   class="address-search__suggestion"
                   (click)="selectAddressSuggestion(suggestion)"
                 >
-                  {{ suggestion.display_name }}
+                  {{ suggestion.displayName }}
                 </button>
               }
             </div>

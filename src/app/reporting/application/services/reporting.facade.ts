@@ -15,9 +15,11 @@ import { UpdateEnergyGoalCommand } from '../commands/update-energy-goal.command'
 
 import { ConsumptionReportsApiService } from '../../infrastructure/api/consumption-reports-api.service';
 import { EnergyGoalsApiService } from '../../infrastructure/api/energy-goals-api.service';
+import { ReportingEventsApiService } from '../../infrastructure/api/reporting-events-api.service';
 
 import { ConsumptionReportAssembler } from '../../infrastructure/assemblers/consumption-report.assembler';
 import { EnergyGoalAssembler } from '../../infrastructure/assemblers/energy-goal.assembler';
+import { ReportingEventAssembler } from '../../infrastructure/assemblers/reporting-event.assembler';
 
 import { ReportingStore } from '../stores/reporting.store';
 
@@ -33,6 +35,7 @@ export type CreateConsumptionReportResult =
 export class ReportingFacade {
   private readonly consumptionReportAssembler = new ConsumptionReportAssembler();
   private readonly energyGoalAssembler = new EnergyGoalAssembler();
+  private readonly reportingEventAssembler = new ReportingEventAssembler();
 
   get consumptionReports() {
     return this.store.consumptionReports;
@@ -40,6 +43,10 @@ export class ReportingFacade {
 
   get energyGoals() {
     return this.store.energyGoals;
+  }
+
+  get reportingEvents() {
+    return this.store.reportingEvents;
   }
 
   get loading() {
@@ -81,6 +88,7 @@ export class ReportingFacade {
   constructor(
     private readonly consumptionReportsApi: ConsumptionReportsApiService,
     private readonly energyGoalsApi: EnergyGoalsApiService,
+    private readonly reportingEventsApi: ReportingEventsApiService,
     private readonly billingFacade: BillingFacade,
     private readonly energyMonitoringFacade: EnergyMonitoringFacade,
     private readonly energyGoalPolicyService: EnergyGoalPolicyService,
@@ -95,6 +103,7 @@ export class ReportingFacade {
       await Promise.all([
         this.loadConsumptionReports(),
         this.loadEnergyGoals(),
+        this.loadReportingEvents(),
         this.energyMonitoringFacade.loadReadings(),
       ]);
     } catch (error) {
@@ -127,6 +136,18 @@ export class ReportingFacade {
     );
 
     this.store.setEnergyGoals(goals);
+  }
+
+  async loadReportingEvents(): Promise<void> {
+    const responses = await firstValueFrom(
+      this.reportingEventsApi.findAllForCurrentUser()
+    );
+
+    const events = responses.map((response) =>
+      this.reportingEventAssembler.toEntity(response)
+    );
+
+    this.store.setReportingEvents(events);
   }
 
   async createConsumptionReport(

@@ -26,6 +26,14 @@ export const IAM_ROUTES: Routes = [
       ),
   },
   {
+    path: 'iam/reset-password',
+    data: { title: 'Reset Password' },
+    loadComponent: () =>
+      import('../pages/reset-password/reset-password-page.component').then(
+        (m) => m.ResetPasswordPageComponent
+      ),
+  },
+  {
     path: 'iam/profile',
     redirectTo: 'settings/profile',
     pathMatch: 'full',

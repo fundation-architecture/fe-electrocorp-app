@@ -1,12 +1,13 @@
 import { Routes } from '@angular/router';
 
 import { activeSubscriptionGuard } from '../../../shared/application/guards/active-subscription.guard';
+import { accessPermissionGuard } from '../../../shared/application/guards/access-permission.guard';
 
 export const SERVICE_MANAGEMENT_ROUTES: Routes = [
   {
     path: 'service/support',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Soporte' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Soporte', requiredPermissions: ['MANAGE_SUPPORT'] },
     loadComponent: () =>
       import('../pages/support-tickets/support-tickets-page.component').then(
         (m) => m.SupportTicketsPageComponent
@@ -14,8 +15,8 @@ export const SERVICE_MANAGEMENT_ROUTES: Routes = [
   },
   {
     path: 'service/maintenance',
-    canActivate: [activeSubscriptionGuard],
-    data: { title: 'Mantenimiento' },
+    canActivate: [activeSubscriptionGuard, accessPermissionGuard],
+    data: { title: 'Mantenimiento', requiredPermissions: ['MANAGE_SUPPORT'] },
     loadComponent: () =>
       import(
         '../pages/maintenance-tickets/maintenance-tickets-page.component'

@@ -22,6 +22,7 @@ import { AppButtonComponent } from '../../../../shared/presentation/components/a
 import { EmptyStateComponent } from '../../../../shared/presentation/components/empty-state/empty-state.component';
 import { ModalFormShellComponent } from '../../../../shared/presentation/components/modal-form-shell/modal-form-shell.component';
 import { SectionCardComponent } from '../../../../shared/presentation/components/section-card/section-card.component';
+import { AccessControlService } from '../../../../shared/application/services/access-control.service';
 
 interface DevicePreset {
   name: string;
@@ -29,6 +30,12 @@ interface DevicePreset {
   type: DeviceType;
   powerWatts: number;
   icon: string;
+}
+
+interface PairingCodeOption {
+  code: string;
+  labelKey: string;
+  type: DeviceType;
 }
 
 @Component({
@@ -57,6 +64,12 @@ export class DevicesPageComponent implements OnInit {
   isTypeDropdownOpen = false;
   initialLoadComplete = false;
   createModalOpen = false;
+  pairModalOpen = false;
+  pairingCode = '';
+  pairAlias = '';
+  renameModalOpen = false;
+  renamingDevice: Device | null = null;
+  renameDeviceName = '';
   removingDeviceIds = new Set<number>();
 
   readonly devicePresets: DevicePreset[] = [
@@ -119,6 +132,10 @@ export class DevicesPageComponent implements OnInit {
   ];
 
   async createPresetDevice(preset: DevicePreset): Promise<void> {
+    if (!this.canCreateAssignedDevices) {
+      return;
+    }
+
     const room = this.resolveRoomForPreset(preset.room);
 
     if (!room) {
@@ -161,6 +178,13 @@ export class DevicesPageComponent implements OnInit {
     { value: 'OTHER', label: 'OTHER', labelKey: 'workplace.deviceTypes.other' },
   ];
 
+  readonly pairingCodeOptions: PairingCodeOption[] = [
+    { code: 'EC-PLUG-100', labelKey: 'devices.pair.options.plug', type: 'PLUG' },
+    { code: 'EC-LIGHT-200', labelKey: 'devices.pair.options.light', type: 'LIGHT' },
+    { code: 'EC-SENSOR-300', labelKey: 'devices.pair.options.sensor', type: 'SENSOR' },
+    { code: 'EC-SWITCH-400', labelKey: 'devices.pair.options.switch', type: 'SWITCH' },
+  ];
+
   readonly powerConfigByType: Record<
     DeviceType,
     { min: number; max: number; step: number; defaultValue: number; warningAt: number }
@@ -178,6 +202,7 @@ export class DevicesPageComponent implements OnInit {
     private readonly activeWorkplaceContext: ActiveWorkplaceContextService,
     private readonly toastService: ToastService,
     private readonly confirmDialog: ConfirmDialogService,
+    private readonly accessControl: AccessControlService,
     private readonly translate: TranslateService
   ) {}
 
@@ -290,13 +315,62 @@ export class DevicesPageComponent implements OnInit {
     return this.powerConfigByType[this.type];
   }
 
+  get canControlDevices(): boolean {
+    return this.accessControl.has('CONTROL_DEVICES');
+  }
+
+  get canManageDevices(): boolean {
+    return this.accessControl.has('MANAGE_DEVICES');
+  }
+
+  get canManageSpaces(): boolean {
+    return this.accessControl.has('MANAGE_SPACES');
+  }
+
+  get canCreateAssignedDevices(): boolean {
+    return this.canManageDevices && this.canManageSpaces;
+  }
+
   openCreateModal(): void {
+    if (!this.canCreateAssignedDevices) {
+      return;
+    }
+
     this.ensureSelectedRoom();
     this.createModalOpen = true;
   }
 
   closeCreateModal(): void {
     this.createModalOpen = false;
+  }
+
+  openPairModal(): void {
+    if (!this.canCreateAssignedDevices) {
+      return;
+    }
+
+    this.ensureSelectedRoom();
+    this.pairModalOpen = true;
+  }
+
+  closePairModal(): void {
+    this.pairModalOpen = false;
+  }
+
+  openRenameModal(device: Device): void {
+    if (!this.canManageDevices) {
+      return;
+    }
+
+    this.renamingDevice = device;
+    this.renameDeviceName = device.name;
+    this.renameModalOpen = true;
+  }
+
+  closeRenameModal(): void {
+    this.renameModalOpen = false;
+    this.renamingDevice = null;
+    this.renameDeviceName = '';
   }
 
   get isHighPowerSelection(): boolean {
@@ -372,60 +446,122 @@ export class DevicesPageComponent implements OnInit {
     this.onPowerBlur();
   }
 
-  async createDevice(): Promise<void> {
-  const name = this.name.trim();
-  const room = this.selectedRoom;
-
-  if (!name) {
-    this.toastService.warning(this.t('devices.validation.nameRequired'));
-    return;
+  selectPairingCode(code: string): void {
+    this.pairingCode = code;
   }
 
-  if (name.length < 3) {
-    this.toastService.warning(this.t('devices.validation.nameMinLength'));
-    return;
+  isSelectedPairingCode(code: string): boolean {
+    return this.normalizePairingCode(this.pairingCode) === code;
   }
 
-  if (!room) {
-    this.toastService.warning(this.t('devices.validation.roomRequired'));
-    return;
-  }
-
-  this.onPowerBlur();
-
-  if (!Number.isFinite(this.powerWatts) || this.powerWatts <= 0) {
-    this.toastService.warning(this.t('devices.validation.powerRequired'));
-    return;
-  }
-
-  const device = await this.deviceControlFacade.createDevice({
-    name,
-    room: room.name,
-    type: this.type,
-    powerWatts: this.powerWatts,
-  });
-
-  if (device) {
-    const assigned = await this.assignCreatedDevice(device, room);
-
-    if (!assigned) {
-      this.toastService.warning(this.t('devices.toasts.createdWithoutAssignment'));
+  async pairDevice(): Promise<void> {
+    if (!this.canCreateAssignedDevices) {
       return;
     }
 
-    this.name = '';
-    this.type = 'PLUG';
-    this.powerWatts = this.powerConfigByType.PLUG.defaultValue;
-    this.closeCreateModal();
+    const pairingCode = this.pairingCode.trim();
+    const room = this.selectedRoom;
 
-    this.toastService.success(this.t('devices.toasts.createdAndAssigned', { room: room.name }));
-    return;
+    if (!pairingCode) {
+      this.toastService.warning(this.t('devices.validation.pairingCodeRequired'));
+      return;
+    }
+
+    if (!room) {
+      this.toastService.warning(this.t('devices.validation.roomRequired'));
+      return;
+    }
+
+    const device = await this.deviceControlFacade.pairDevice({
+      pairingCode,
+      alias: this.pairAlias,
+      room: room.name,
+    });
+
+    if (device) {
+      const assigned = await this.assignCreatedDevice(device, room);
+
+      if (!assigned) {
+        this.toastService.warning(this.t('devices.toasts.pairedWithoutAssignment'));
+        return;
+      }
+
+      this.pairingCode = '';
+      this.pairAlias = '';
+      this.closePairModal();
+
+      this.toastService.success(this.t('devices.toasts.pairedAndAssigned', {
+        device: device.name,
+        room: room.name,
+      }));
+      return;
+    }
+
+    this.toastService.error(this.t('devices.pairError'));
   }
 
-  this.toastService.error(this.t('devices.createError'));
-}
+  async createDevice(): Promise<void> {
+    if (!this.canCreateAssignedDevices) {
+      return;
+    }
+
+    const name = this.name.trim();
+    const room = this.selectedRoom;
+
+    if (!name) {
+      this.toastService.warning(this.t('devices.validation.nameRequired'));
+      return;
+    }
+
+    if (name.length < 3) {
+      this.toastService.warning(this.t('devices.validation.nameMinLength'));
+      return;
+    }
+
+    if (!room) {
+      this.toastService.warning(this.t('devices.validation.roomRequired'));
+      return;
+    }
+
+    this.onPowerBlur();
+
+    if (!Number.isFinite(this.powerWatts) || this.powerWatts <= 0) {
+      this.toastService.warning(this.t('devices.validation.powerRequired'));
+      return;
+    }
+
+    const device = await this.deviceControlFacade.createDevice({
+      name,
+      room: room.name,
+      type: this.type,
+      powerWatts: this.powerWatts,
+    });
+
+    if (device) {
+      const assigned = await this.assignCreatedDevice(device, room);
+
+      if (!assigned) {
+        this.toastService.warning(this.t('devices.toasts.createdWithoutAssignment'));
+        return;
+      }
+
+      this.name = '';
+      this.type = 'PLUG';
+      this.powerWatts = this.powerConfigByType.PLUG.defaultValue;
+      this.closeCreateModal();
+
+      this.toastService.success(this.t('devices.toasts.createdAndAssigned', { room: room.name }));
+      return;
+    }
+
+    this.toastService.error(this.t('devices.createError'));
+  }
 
   async toggleDevice(device: Device): Promise<void> {
+    if (!this.canControlDevices) {
+      return;
+    }
+
     const viewport = this.captureViewport();
     this.stabilizeViewport(viewport);
 
@@ -441,7 +577,50 @@ export class DevicesPageComponent implements OnInit {
     }
   }
 
+  async renameDevice(): Promise<void> {
+    if (!this.canManageDevices) {
+      return;
+    }
+
+    const device = this.renamingDevice;
+    const name = this.renameDeviceName.trim();
+
+    if (!device) {
+      return;
+    }
+
+    if (!name) {
+      this.toastService.warning(this.t('devices.validation.nameRequired'));
+      return;
+    }
+
+    if (name.length < 3) {
+      this.toastService.warning(this.t('devices.validation.nameMinLength'));
+      return;
+    }
+
+    const success = await this.deviceControlFacade.updateDevice({
+      deviceId: device.id,
+      name,
+      room: device.room,
+      type: device.type,
+      powerWatts: device.powerWatts,
+    });
+
+    if (success) {
+      this.closeRenameModal();
+      this.toastService.success(this.t('devices.toasts.renamed'));
+      return;
+    }
+
+    this.toastService.error(this.t('devices.updateError'));
+  }
+
   async deleteDevice(deviceId: number): Promise<void> {
+    if (!this.canManageDevices) {
+      return;
+    }
+
     if (this.removingDeviceIds.has(deviceId)) {
       return;
     }
@@ -546,6 +725,10 @@ export class DevicesPageComponent implements OnInit {
 
   private normalize(value: string): string {
     return value.trim().toLocaleLowerCase();
+  }
+
+  private normalizePairingCode(value: string): string {
+    return value.trim().toLocaleUpperCase();
   }
 
   private currentAssignmentsByDevice(): Map<number, DeviceAssignment> {

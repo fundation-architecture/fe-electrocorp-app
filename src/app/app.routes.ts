@@ -8,6 +8,7 @@ import { NOTIFICATIONS_ROUTES } from './notifications/presentation/routes/notifi
 import { REPORTING_ROUTES } from './reporting/presentation/routes/reporting.routes';
 import { SERVICE_MANAGEMENT_ROUTES } from './service-management/presentation/routes/service-management.routes';
 import { activeSubscriptionGuard } from './shared/application/guards/active-subscription.guard';
+import { accessPermissionGuard } from './shared/application/guards/access-permission.guard';
 import { authGuard } from './shared/application/guards/auth.guard';
 import { WORKPLACE_ROUTES } from './workplace/presentation/routes/workplace.routes';
 
@@ -62,11 +63,27 @@ export const routes: Routes = [
       },
       {
         path: 'billing',
-        data: { title: 'Facturacion' },
+        canActivate: [accessPermissionGuard],
+        data: {
+          title: 'Facturacion',
+          requiredPermissions: ['MANAGE_BILLING'],
+        },
         loadComponent: () =>
           import(
             './billing/presentation/pages/billing-history/billing-history-page.component'
           ).then((m) => m.BillingHistoryPageComponent),
+      },
+      {
+        path: 'access',
+        canActivate: [accessPermissionGuard],
+        data: {
+          title: 'Accesos',
+          requiredPermissions: ['MANAGE_ACCESS'],
+        },
+        loadComponent: () =>
+          import('./iam/presentation/pages/access/access-page.component').then(
+            (m) => m.AccessPageComponent
+          ),
       },
       {
         path: 'platform',

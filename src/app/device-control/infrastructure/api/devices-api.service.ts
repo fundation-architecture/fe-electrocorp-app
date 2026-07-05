@@ -8,6 +8,8 @@ import { BaseApiService } from '../../../shared/infrastructure/api/base-api.serv
 import { Device } from '../../domain/model/device.entity';
 import { DeviceAssembler } from '../assemblers/device.assembler';
 import { DeviceResource } from '../resources/device.resource';
+import { PairDeviceResource } from '../resources/pair-device.resource';
+import { UpdateDeviceResource } from '../resources/update-device.resource';
 import { DeviceResponse } from '../responses/device.response';
 
 @Injectable({
@@ -35,6 +37,23 @@ export class DevicesApiService extends BaseApiService<
     return this.http.patch<DeviceResponse>(
       `${this.resourceEndpoint}/${payload.deviceId}/toggle`,
       {}
+    );
+  }
+
+  pair(resource: PairDeviceResource): Observable<DeviceResponse> {
+    return this.http.post<DeviceResponse>(
+      `${this.resourceEndpoint}/pairings`,
+      resource
+    );
+  }
+
+  updateDetails(payload: {
+    deviceId: number;
+    resource: UpdateDeviceResource;
+  }): Observable<DeviceResponse> {
+    return this.http.patch<DeviceResponse>(
+      `${this.resourceEndpoint}/${payload.deviceId}`,
+      payload.resource
     );
   }
 

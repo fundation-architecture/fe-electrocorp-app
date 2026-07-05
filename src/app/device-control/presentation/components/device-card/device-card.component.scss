@@ -253,11 +253,21 @@ h2 {
 
 .device-card__actions {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 10px;
   align-items: center;
 }
 
 app-button {
   justify-self: start;
+}
+
+@media (max-width: 520px) {
+  .device-card__actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .device-card__actions app-button:first-child {
+    grid-column: 1 / -1;
+  }
 }

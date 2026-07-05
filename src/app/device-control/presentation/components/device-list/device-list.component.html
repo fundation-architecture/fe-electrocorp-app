@@ -36,7 +36,10 @@
               [locationName]="locationName"
               [roomName]="roomNameForDevice(device)"
               [removing]="isDeviceRemoving(device.id)"
+              [canControlDevices]="canControlDevices"
+              [canManageDevices]="canManageDevices"
               (toggle)="toggle.emit($event)"
+              (rename)="rename.emit($event)"
               (remove)="remove.emit($event)"
             />
           </div>
