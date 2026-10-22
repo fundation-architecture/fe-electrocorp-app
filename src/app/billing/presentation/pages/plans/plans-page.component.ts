@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { BillingFacade } from '../../../application/services/billing.facade';
 import { PaymentFormCommand } from '../../../application/commands/payment-form.command';
@@ -34,7 +34,8 @@ export class PlansPageComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly confirmDialog: ConfirmDialogService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly translate: TranslateService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -63,10 +64,13 @@ export class PlansPageComponent implements OnInit {
     if (success) {
       this.selectedPlan = null;
       this.toastService.success('Pago registrado y plan activado.');
+      if (this.billingFacade.error()) {
+        this.toastService.warning(this.translate.instant(this.billingFacade.error()!));
+      }
       return;
     }
 
-    this.toastService.error('No se pudo registrar el pago.');
+    this.toastService.error(this.translate.instant(this.billingFacade.error() ?? 'billing.subscribeError'));
   }
 
   async cancelSubscription(): Promise<void> {

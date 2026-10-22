@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
 import { Invoice } from '../../domain/model/invoice.entity';
@@ -164,14 +165,25 @@ export class BillingFacade {
         this.subscriptionAssembler.toEntity(response)
       );
 
-      await this.refreshBillingData();
+      // Checkout already activated the plan. A history failure must not invite
+      // the user to submit another payment or discard the confirmed subscription.
+      const refresh = await Promise.allSettled([
+        this.loadPlans(), this.loadPayments(), this.loadInvoices(),
+      ]);
+      if (refresh.some((result) => result.status === 'rejected')) {
+        this.store.setError('billing.historyRefreshError');
+      }
 
       return true;
     } catch (error) {
-      console.error(error);
-      this.store.setError('billing.subscribeError');
-
-      await this.safeRefreshBillingData();
+      if (!this.store.error()) {
+        this.store.setError(
+          error instanceof HttpErrorResponse && error.status === 0 ? 'billing.connectionError' :
+          error instanceof HttpErrorResponse && error.status === 401 ? 'auth.sessionExpired' :
+          error instanceof HttpErrorResponse && error.status === 403 ? 'billing.paymentForbidden' :
+          'billing.subscribeError'
+        );
+      }
 
       return false;
     } finally {
@@ -300,14 +312,6 @@ export class BillingFacade {
       this.loadPayments(),
       this.loadInvoices(),
     ]);
-  }
-
-  private async safeRefreshBillingData(): Promise<void> {
-    try {
-      await this.refreshBillingData();
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   private startRequest(): void {

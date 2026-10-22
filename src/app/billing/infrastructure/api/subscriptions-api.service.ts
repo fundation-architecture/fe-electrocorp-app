@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, timeout } from 'rxjs';
 
 import { API_BASE_URL } from '../../../shared/infrastructure/api/api-config';
 import { BaseApiService } from '../../../shared/infrastructure/api/base-api.service';
@@ -29,7 +29,7 @@ export class SubscriptionsApiService extends BaseApiService<
   findCurrent(): Observable<SubscriptionResponse | null> {
     return this.http.get<SubscriptionResponse | null>(
       `${this.resourceEndpoint}/current`
-    );
+    ).pipe(timeout(15000));
   }
 
   cancelCurrent(): Observable<void> {

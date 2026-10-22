@@ -32,9 +32,8 @@
         (ngModelChange)="onCardNumberChange($event)"
         autocomplete="cc-number"
         inputmode="numeric"
-        maxlength="19"
-        minlength="19"
-        pattern="[0-9 ]{19}"
+        maxlength="23"
+        pattern="([0-9] ?){13,19}"
         placeholder="0000 0000 0000 0000"
         required
       />
@@ -74,6 +73,10 @@
         />
       </label>
     </div>
+
+    @if (validationError) {
+      <p role="alert">{{ validationError | translate }}</p>
+    }
 
     <div class="actions">
       <app-button type="submit" variant="create" [disabled]="loading">

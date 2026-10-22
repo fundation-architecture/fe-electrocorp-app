@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class PaymentValidationService {
   isValidCardNumber(cardNumber: string): boolean {
     const sanitized = this.sanitizeCardNumber(cardNumber);
-    return /^\d{16}$/.test(sanitized);
+    return /^\d{13,19}$/.test(sanitized);
   }
 
   isValidCvv(cvv: string): boolean {

@@ -4,6 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { Plan } from '../../../domain/model/plan.entity';
 import { PaymentFormCommand } from '../../../application/commands/payment-form.command';
+import { PaymentValidationService } from '../../../domain/services/payment-validation.service';
 import { AppButtonComponent } from '../../../../shared/presentation/components/app-button/app-button.component';
 import { ModalFormShellComponent } from '../../../../shared/presentation/components/modal-form-shell/modal-form-shell.component';
 
@@ -25,9 +26,12 @@ export class PaymentFormComponent {
   cardNumber = '';
   expirationDate = '';
   cvv = '';
+  validationError: string | null = null;
+
+  constructor(private readonly validation: PaymentValidationService) {}
 
   onCardNumberChange(value: string): void {
-    const digits = value.replace(/\D/g, '').slice(0, 16);
+    const digits = value.replace(/\D/g, '').slice(0, 19);
     this.cardNumber = digits.match(/.{1,4}/g)?.join(' ') ?? '';
   }
 
@@ -47,6 +51,16 @@ export class PaymentFormComponent {
   }
 
   onConfirm(): void {
+    if (this.loading) return;
+
+    this.validationError =
+      !this.validation.isValidHolderName(this.holderName) ? 'billing.invalidHolderName' :
+      !this.validation.isValidCardNumber(this.cardNumber) ? 'billing.invalidCardNumber' :
+      !this.validation.isValidExpirationDate(this.expirationDate) ? 'billing.invalidExpirationDate' :
+      !this.validation.isValidCvv(this.cvv) ? 'billing.invalidCvv' : null;
+
+    if (this.validationError) return;
+
     this.confirmed.emit({
       planCode: this.plan.code,
       holderName: this.holderName,
